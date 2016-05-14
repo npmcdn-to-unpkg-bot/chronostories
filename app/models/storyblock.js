@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 
 var StoryBlockSchema = new mongoose.Schema({
-    _id: String,
     blockId: Number,
     title: String,
     description: String,

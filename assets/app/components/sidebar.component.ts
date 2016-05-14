@@ -1,9 +1,11 @@
 import {Component} from "angular2/core";
 
 @Component({
-    selector:'timeline',
+    selector:'sidebar',
     template: `
+        Sidebar
     `
 })
-export class TimelineComponent {
+export class SidebarComponent {
+
 }

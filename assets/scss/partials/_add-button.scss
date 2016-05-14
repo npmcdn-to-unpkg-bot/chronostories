@@ -1,0 +1,86 @@
+add-button {
+  position: absolute;
+  padding-left: $timeline-left-padding;
+  left: $timeline-left-padding + $storyblock-circle-size/2 + $timeline-width/2 - $timeline-scrollable-area/2;
+  cursor: pointer;
+  @include translateY(-50%);
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    @include rounded(50%);
+  }
+
+  &::before {
+    width: $storyblock-circle-size - 4px;
+    height: $storyblock-circle-size - 4px;
+    left: $timeline-left-padding + 2px;
+    top: 2px;
+    border: 2px $white solid;
+    z-index: 2;
+  }
+
+  &::after {
+    color: $dodger-blue;
+    width: $storyblock-circle-size;
+    height: $storyblock-circle-size;
+    left: $timeline-left-padding;
+    top: 0;
+    //border: 2px $cadet-blue solid;
+    z-index: 1;
+    @include shadows(0 0 4px 0);
+    @include animation('add-button-border', color, lighten($dodger-blue, 5%), darken($dodger-blue, 5%), 3s);
+  }
+
+  a {
+    color: $white !important;
+    text-decoration: none !important;
+    background-color: $dodger-blue;
+    position: relative;
+    top: 0;
+    width: $storyblock-circle-size;
+    height: $storyblock-circle-size;
+    z-index: 1;
+    @extend .slab;
+    @include rounded(50%);
+    @include flexbox();
+    @include justify-content(center);
+    @include align-items(center);
+    @include animation('add-button-bg', background-color, lighten($dodger-blue, 5%), darken($dodger-blue, 5%), 3s);
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: $storyblock-circle-size + 2px;
+      width: 0;
+      height: 0;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      border-right: 4px solid rgba($tundora, .75);
+      @include translateY(-50%);
+      @include animation('add-button-tooltop', opacity, .75, 1, 3s);
+    }
+
+    &:after {
+      content: 'Add new storyblock here';
+      position: absolute;
+      top: 50%;
+      left: $storyblock-circle-size + 2px + 4px;
+      color: $white;
+      padding: 6px;
+      font-size: 9px;
+      white-space: nowrap;
+      background: rgba($tundora, .75);
+      @extend .sans-serif;
+      @include rounded();
+      @include translateY(-50%);
+      @include animation('add-button-tooltop', opacity, .75, 1, 3s);
+    }
+  }
+
+  span {
+    font-size: 14px;
+  }
+
+}

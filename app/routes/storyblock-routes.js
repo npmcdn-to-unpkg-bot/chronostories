@@ -1,67 +1,63 @@
 var express = require('express');
 var router = express.Router();
-var storyBlockModel = require('../models/storyblock');
-var ObjectId = require('mongoose').Types.ObjectId;
+var StoryBlockModel = require('../models/storyblock');
 
 router.get('/', function (req, res) {
-    storyBlockModel.find(function (err, storyBlock) {
+    console.log('router.get');
+    StoryBlockModel.find(function (err, storyBlock) {
         res.send(storyBlock);
     })
 });
 
-
 router.post('/', function (req, res, next) {
-    storyBlockModel.create(req.body, function (err, storyBlock) {
-        if (err) return next(err);
-        res.json(storyBlock);
+    console.log('router.post');
+    var data = JSON.parse(req.body.data);
+    console.log(data);
+    StoryBlockModel.create(data, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        return res.status;
     });
 });
 
 router.get('/:id', function (req, res, next) {
-    storyBlockModel.findById(req.params.id, function (err, storyBlock) {
-        if (err) return next(err);
+    console.log('router.get id');
+    var id = req.params.id;
+    StoryBlockModel.findById(id, function (err, storyBlock) {
+        if (err) {
+            console.log(err);
+            return res.status;
+        }
         res.json(storyBlock);
     });
 });
 
 router.put('/:id', function (req, res, next) {
-    storyBlockModel.findByIdAndUpdate(req.params.id, req.body, function (err, storyBlock) {
-        if (err) return next(err);
-        res.json(storyBlock);
-    });
-
-    return storyBlockModel.findById(req.params.id, function (err, block) {
-        block.title = req.body.title;
-        block.description = req.body.description;
-        block.timePositon = req.body.timePositon;
-        block.importance = req.body.importance;
-        return block.save(function (err) {
-            if (!err) {
-                console.log("updated");
-            } else {
-                console.log(err);
-            }
-            return res.send(block);
-        });
+    console.log('router.put id');
+    var id = req.params.id;
+    var data = JSON.parse(req.body.data);
+    StoryBlockModel.findOneAndUpdate({_id : id}, data, function (err, storyBlock) {
+        if (err) {
+            console.log(err);
+        }
+        console.log('Saving');
+        return res.send('');
     });
 });
 
 router.delete('/:id', function (req, res, next) {
-
-    console.log(req.params.id);
-    return storyBlockModel.findById({_id : new ObjectId(req.params.id)}, function (err, block) {
-        if(!block){
-            console.log(req.params.id + ' not found')
-            return res.send('');
+    console.log('router.delete id');
+    var id = req.params.id;
+    console.log(id);
+    StoryBlockModel.findOneAndRemove({_id: id}, function (err) {
+        if (err) {
+            console.log(err);
         }
-        return block.remove(function (err) {
-            if (!err) {
-                console.log("removed");
-                return res.send('');
-            } else {
-                console.log(err);
-            }
-        }).exec();
+        console.log('Found');
+        return res.send('');
+    }).exec(function(err){
+        console.log('Deleting...');
     });
 });
 

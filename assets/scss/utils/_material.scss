@@ -9,7 +9,7 @@
 }
 
 .button {
-  margin: 0 4px;
+  border: 0;
   color: $white;
   font-size: 14px;
   text-transform: uppercase;
@@ -17,27 +17,54 @@
   cursor: pointer;
   &.inline-button {
     display: inline-block;
+    margin: 0 4px;
     padding: 0 8px;
     line-height: 24px;
+    @include rounded(0);
     &.primary {
       background: none;
       color: $dodger-blue;
       &:active {
-        background: rgba($dodger-blue, .4);
+        background: rgba($dodger-blue, .24);
       }
     }
     &.alert {
       background: none;
       color: $punch;
       &:active {
-        background: rgba($punch, .4);
+        background: rgba($punch, .24);
+      }
+    }
+    &.secondary {
+      background: none;
+      color: rgba($bluewood, .5);
+      &:active {
+        background: rgba($bluewood, .24);
       }
     }
   }
-  &.primary {
-    background: $dodger-blue;
-  }
-  &.alert {
-    background: $punch;
+  &.block-button {
+    display: block;
+    width: 100%;
+    padding: $gutter/2 $gutter;
+    margin-top: $gutter;
+    &.primary {
+      background: $dodger-blue;
+      &:hover {
+        background: darken($dodger-blue, 5%);
+      }
+    }
+    &.alert {
+      background: $punch;
+      &:hover {
+        background: darken($punch, 5%);
+      }
+    }
+    &.secondary {
+      background: $bluewood;
+      &:hover {
+        background: darken($bluewood, 5%);
+      }
+    }
   }
 }

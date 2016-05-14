@@ -9,11 +9,15 @@ import {StoryBlockService} from "../services/storyblocks.service";
     template: `
         <div class="index" (mousewheel)="zoom()" (DOMMouseScroll)="zoom()"><span>{{utilsService.getRomanNumeral(index + 1)}}</span></div>
         <div class="text-container">
-            <div class="title"><span [hidden]="!_active" >A</span><span [hidden]="!_selected" >S</span>{{storyBlockInfo.title}}</div>
-            <div class="description">{{storyBlockInfo.description}}</div>
-            <div class="actions">
+            <input class="title" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.title" placeholder="Insert a title" />
+            <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..."></textarea>
+            <div class="default-actions">
                 <a (click)="edit(index, $event)" class="button inline-button primary">Edit</a>
                 <a (click)="remove(index, $event)" class="button inline-button alert">Remove</a>
+            </div>
+            <div class="exposed-actions">
+                <a (click)="save(index, $event)" class="button inline-button primary">Save</a>
+                <a (click)="cancel()" class="button inline-button secondary">Cancel</a>
             </div>
         </div>
     `,
@@ -24,23 +28,24 @@ import {StoryBlockService} from "../services/storyblocks.service";
 export class StoryBlockComponent implements OnInit {
     public storyBlockInfo:StoryBlock;
     public index;
+    public _exposed = false;
     public _active = true;
     private _actionTimeout;
     public _selected = false;
     private _zoomLevel = 10;
     private _previousZoomLevel = 10;
     private _zoomStrength = 5;
-    private _zoomOffset = 250;
+    private _zoomOffset = 0;
     private _zoomStep = 85;
-    private _self;
+    private storyBlockLocalSave:StoryBlock;
 
     @Output() zoomEvent:EventEmitter<any> = new EventEmitter();
-
+    @Output() exposeEvent:EventEmitter<any> = new EventEmitter();
     @Output() enterHeaderEvent:EventEmitter<any> = new EventEmitter();
     @Output() exitHeaderEvent:EventEmitter<any> = new EventEmitter();
+    @Output() removeStoryBlockEvent:EventEmitter<any> = new EventEmitter();
 
     constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService: StoryBlockService) {
-        storyBlockService.generateTestData();
     }
 
     @Input()
@@ -187,45 +192,67 @@ export class StoryBlockComponent implements OnInit {
         }, 100);
     }
 
-    edit(index, event){
-        console.log('Should edit', index, event);
-        let animation = this._ab.css();
-
-        var toStyle = {
-            position: 'fixed',
-            top: '0px',
-            left: '0px',
-            right: '240px',
-            bottom: '0px',
-            width: 'auto'
-        };
-
-        animation
-            .setDuration(100);
-        animation
-            .setToStyles(toStyle);
-
-        if (!!this._actionTimeout) {
-            console.log('[StoryBlock #' + this.index + '] Animation removed');
-            clearTimeout(this._actionTimeout);
+    focus(){
+        var native = this._e.nativeElement;
+        var container = null;
+        var textarea = null;
+        for (var i = 0; i < native.childNodes.length; i++) {
+            if ((native.childNodes[i].className || '').indexOf("text-container") > -1) {
+                container = native.childNodes[i];
+                break;
+            }
         }
+        if(!!container) {
+            for (var i = 0; i < container.childNodes.length; i++) {
+                if ((container.childNodes[i].className || '').indexOf("description") > -1) {
+                    textarea = container.childNodes[i];
+                    break;
+                }
+            }
+            if (!!textarea) {
+                setTimeout(() => {
+                    textarea.focus();
+                }, 50);
+            }
+        }
+    }
 
-        var _self = this;
-
-        this._actionTimeout = setTimeout(function () {
-            animation
-                .start(_self._e.nativeElement);
-        }, 100);
+    edit(index, event){
+        this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
+        this._exposed = true;
+        this.exposeEvent.emit(index);
+        this.focus();
     }
 
     remove(index, event){
+        console.log('Should remove', index, event);
         this.storyBlockService.deleteStoryBlock(this.storyBlockInfo).subscribe(
             data => {
                 console.log(data)
             },
-            err => console.error(err),
-            () => console.log('done')
+            () => {
+                console.log('done');
+                this.removeStoryBlockEvent.emit(this.index);
+            }
         );
-        console.log('Should remove', index, event);
+    }
+
+    save(index, event){
+        console.log('Should save', index, event);
+        this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
+            data => {
+                console.log(data)
+            },
+            () => {
+                console.log('saved');
+                this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
+            }
+        );
+    }
+
+    cancel(){
+        this._exposed = false;
+        this.exposeEvent.emit(-1);
+        this.storyBlockInfo = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockLocalSave));
     }
 }

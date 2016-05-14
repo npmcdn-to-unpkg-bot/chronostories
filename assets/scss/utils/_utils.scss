@@ -11,6 +11,36 @@
   @extend .slab;
 }
 
+.flexbox {
+  @include flexbox();
+  > .flex-child {
+    display: block;
+  }
+}
+.flex-row {
+  @include flex-flow(row nowrap);
+}
+/*
+.flex-vtop {
+  @include align-items(flex-start);
+}
+.flex-vbottom {
+  @include align-items(flex-end);
+}
+.flex-vcenter {
+  @include align-items(center);
+}
+.flex-hleft {
+  @include justify-content(flex-start);
+}
+.flex-hright {
+  @include justify-content(flex-start);
+}
+.flex-hcenter {
+  @include justify-content(flex-start);
+}
+*/
+
 .collapse {
   display: none;
 

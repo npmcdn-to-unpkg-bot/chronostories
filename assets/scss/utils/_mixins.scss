@@ -95,6 +95,10 @@
   -o-transition: $transition;
   transition: $transition;
 }
+@mixin transitionTiming($value) {
+  -webkit-transition-timing-function: $value; /* Safari and Chrome */
+  transition-timing-function: $value;
+}
 @mixin translateX($translation) {
   -webkit-transform: translateX($translation);
   -ms-transform: translateX($translation);
@@ -119,6 +123,52 @@
   -webkit-transform: $values;
   -ms-transform: $values;
   transform: $values;
+}
+@mixin animation($name, $property, $from, $to, $duration:1s, $loop:infinite){
+  @if($loop == infinite) {
+    @-webkit-keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      50% { #{$property}: $to; }
+      100% { #{$property}: $from; }
+    }
+    @-moz-keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      50% { #{$property}: $to; }
+      100% { #{$property}: $from; }
+    }
+    @-o-keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      50% { #{$property}: $to; }
+      100% { #{$property}: $from; }
+    }
+    @keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      50% { #{$property}: $to; }
+      100% { #{$property}: $from; }
+    }
+  }
+  @else {
+    @-webkit-keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      100% { #{$property}: $to; }
+    }
+    @-moz-keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      100% { #{$property}: $to; }
+    }
+    @-o-keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      100% { #{$property}: $to; }
+    }
+    @keyframes #{$name} {
+      0%   { #{$property}: $from; }
+      100% { #{$property}: $to; }
+    }
+  }
+  -webkit-animation: #{$name} #{$duration} #{$loop}; /* Safari 4+ */
+  -moz-animation:    #{$name} #{$duration} #{$loop}; /* Fx 5+ */
+  -o-animation:      #{$name} #{$duration} #{$loop}; /* Opera 12+ */
+  animation:         #{$name} #{$duration} #{$loop}; /* IE 10+, Fx 29+ */
 }
 
 /* STYLES */

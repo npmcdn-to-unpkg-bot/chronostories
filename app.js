@@ -8,7 +8,10 @@ var mongoose = require('mongoose');
 var database = require('./app/config/database');
 var appRoutes = require('./app/routes/main-routes');
 var storyBlocksRouter = require('./app/routes/storyblock-routes');
+var authRoutes = require('./app/routes/auth-routes');
 var app = express();
+var passport = require('passport');
+require('./app/config/passport');
 
 mongoose.connect(database.url);
 setTimeout(function () {
@@ -18,7 +21,7 @@ setTimeout(function () {
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function () {
-    console.log('Mongoose default connection open');
+    console.log('Mongoose default connection open to ' + database.url);
 });
 
 // If the connection throws an error
@@ -31,6 +34,7 @@ mongoose.connection.on('disconnected', function () {
     console.log('Mongoose default connection disconnected');
 });
 
+app.use(passport.initialize());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 
@@ -46,12 +50,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, GET, PATCH, DELETE');
     next();
 });
 
 app.use('/', appRoutes);
 app.use('/storyblocks', storyBlocksRouter);
+app.use('/auth', authRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

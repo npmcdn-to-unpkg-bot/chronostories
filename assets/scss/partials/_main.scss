@@ -3,3 +3,34 @@ main {
   left: 0;
   right: $aside-width;
 }
+
+#controls {
+  position: fixed;
+  right: $gutter + $aside-width;
+  top: $gutter;
+  background-color: $white;
+  overflow: hidden;
+  @include shadows(0px 1px 4px rgba($black,0.3));
+  @include rounded();
+
+  a {
+    display: block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    color: $tundora;
+    font-weight: 700;
+    text-align: center;
+    background-color: $white;
+    @include transition(background-color);
+    &:first-child {
+      border-bottom: 1px darken($athens-grey, 5%) solid;
+    }
+    &:hover {
+      cursor: pointer;
+      color: $black;
+      background-color: $athens-grey;
+      text-decoration: none;
+    }
+  }
+}

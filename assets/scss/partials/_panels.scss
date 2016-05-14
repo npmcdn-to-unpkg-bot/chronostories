@@ -1,0 +1,15 @@
+.panel {
+  display: block;
+  padding: $gutter/2;
+  font-size: 12px;
+  margin-top: 6px;
+
+  &.panel-error {
+    color: $punch;
+    background: rgba($punch, .2);
+  }
+  &.panel-success {
+    color: $apple;
+    background: rgba($apple, .2);
+  }
+}

@@ -4,18 +4,41 @@ aside {
   bottom: 0;
   right: 0;
   width: $aside-width;
-  padding: $gutter $gutter (44px + $gutter*2) $gutter;
   color: $white;
   background: $mountain-meadow;
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: $gutter;
-    display: block;
-    height: 44px;
-    background: url('/img/logo.png') no-repeat center center;
-    background-size: 79px 44px;
+  @include flexbox();
+  @include flex-flow(column nowrap);
+  sidebar {
+    position: relative;
+    padding: $gutter $gutter (44px + $gutter*2) $gutter;
+    @include flex(1);
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: $gutter;
+      display: block;
+      height: 44px;
+      background: url('/img/logo.png') no-repeat center center;
+      background-size: 79px 44px;
+    }
+  }
+  a.user-aside {
+    cursor: pointer;
+    padding: 0 $gutter;
+    background: rgba($black, .25);
+    color: $white;
+    font-size: 13px;
+    line-height: 1;
+    text-decoration: none;
+    @include flexbox();
+    @include flex(0 0 40px);
+    @include align-items(center);
+    @include justify-content(center);
+
+    &:hover {
+      background: rgba($black, .35);
+    }
   }
 }

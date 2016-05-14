@@ -1,8 +1,13 @@
 import {Component, OnInit, Output, EventEmitter} from 'angular2/core';
+import {NgClass} from 'angular2/common';
 import {StoryBlockService} from "../services/storyblocks.service";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockComponent} from "./storyblock.component";
 import {TimelineComponent} from "./timeline.component";
+import {AddButtonComponent} from "./add-button.component";
+import {SidebarComponent} from "./sidebar.component";
+import {AuthFormComponent} from "./auth-form.component";
+import {User} from "../models/user";
 // import {LocalStorage} from "angular2-localstorage/LocalStorage";
 
 @Component({
@@ -10,35 +15,55 @@ import {TimelineComponent} from "./timeline.component";
     template: `
         <main>
             <timeline class="timeline-block"></timeline>
-            <div (document:scroll)="onScroll($event)" class="story-blocks">
+            <div class="story-blocks">
                 <storyblock *ngFor="#storyBlock of storyBlocks; #i = index" 
                     [index]="i" 
                     [storyBlockInfo]="storyBlock" 
-                    [zoomLevel]="zoomLevel" 
-                    (zoomEvent)="onMouseWheel($event)" 
+                    [zoomLevel]="zoomLevel"
+                    [ngClass]="{exposed: exposedIndex == i}"
+                    (removeStoryBlockEvent)="removeStoryBlock($event)" 
+                    (exposeEvent)="setExposed($event)" 
                     (enterHeaderEvent)="requestSelection($event)" 
                     (exitHeaderEvent)="requestDeselection($event)" 
                     class="story-block"></storyblock>
             </div>
-            <div (mousewheel)="onMouseWheel()" (DOMMouseScroll)="onMouseWheel()" class="timeline"></div>
+            <div class="timeline"
+                (mouseenter)="onMouseEnter($event)"
+                (mouseleave)="onMouseLeave($event)"
+                (mousemove)="onMouseMove($event)">
+                <add-button *ngIf="addButton.visible"
+                    [offsetY]="addButton.top"
+                    (click)="addStoryBlock($event)"></add-button>
+            </div>
+            <div id="controls">
+                <div id="zoom-controls">              
+                    <a title="Zoom in" (click)="zoomIn()">+</a>  
+                    <a title="Zoom out" (click)="zoomOut()">&ndash;</a>                
+                </div>            
+            </div>
         </main>
         <aside>
-            Sidebar
+            <sidebar></sidebar>
+            <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
+        <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
     `,
     providers: [StoryBlockService],
-    directives: [StoryBlockComponent, TimelineComponent]
+    directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, SidebarComponent, AuthFormComponent, NgClass]
 })
 
 export class AppComponent implements OnInit {
     public storyBlocks:StoryBlock[];
-    @Output() scrollWheel:EventEmitter<any> = new EventEmitter();
     zoomLevel = 10;
     public selectedIndex = 0;
-    scrollValue = document.body.scrollTop;
+    public exposedIndex = -1;
+    public addButton = {
+        visible: false,
+        top: 0
+    };
     public selectedBlock:StoryBlock;
     public token:string = '';
-
+    public accessFormVisible = false;
 
     constructor(private storyBlockService:StoryBlockService) {
     }
@@ -47,7 +72,16 @@ export class AppComponent implements OnInit {
         this.getStoryBlocks();
         this.zoomLevel = 10;
         this.selectedIndex = 0;
-        this.scrollValue = document.body.scrollTop;
+        this.exposedIndex = -1;
+        this.addButton = {
+            visible: false,
+            top: 0
+        };
+        this.accessFormVisible = false;
+        // this.storyBlockService.generateTestData().subscribe(
+        //     err => console.error(err),
+        //     () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks')
+        // );
     }
 
     getStoryBlocks() {
@@ -57,24 +91,66 @@ export class AppComponent implements OnInit {
                 this.selectedBlock = this.storyBlocks[this.selectedIndex]
             },
             err => console.error(err),
-            () => console.log('done, loaded '+this.storyBlocks.length +' blocks')
+            () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks')
         );
-
     }
 
-    onMouseWheel(e) {
-        var e = window.event || e; // old IE support
-        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-        console.log('Zoomed, old zoomLevel is ' + this.zoomLevel + ' and delta is ' + delta);
-        if ((this.zoomLevel > 0 && delta < 0) || (this.zoomLevel < 10 && delta > 0)) {
-            this.zoomLevel += (delta * 2);
+    removeStoryBlock(index){
+        this.storyBlocks.splice(index, 1);
+    }
+
+    showAccessForm(){
+        this.accessFormVisible = true;
+        document.querySelector('body').classList.add('no-scroll');
+    }
+
+    hideAccessForm(){
+        this.accessFormVisible = false;
+        document.querySelector('body').classList.remove('no-scroll');
+    }
+
+    zoomIn(){
+        if(this.zoomLevel < 10) {
+            this.zoomLevel++;
         }
-        e.preventDefault();
-        e.stopPropagation();
     }
 
-    onScroll(e) {
-        this.scrollValue = document.body.scrollTop;
+    zoomOut(){
+        if(this.zoomLevel > 0) {
+            this.zoomLevel--;
+        }
+    }
+
+    onMouseEnter(event){
+        this.addButton = {
+            visible: true,
+            top: event.y
+        };
+    }
+
+    onMouseLeave(event){
+        this.addButton = {
+            visible: false,
+            top: 0
+        };
+    }
+
+    onMouseMove(event){
+        if(this.addButton.visible) {
+            this.addButton.top = event.y;
+        }
+    }
+
+    addStoryBlock(event){
+        this.addButton = {
+            visible: false,
+            top: 0
+        };
+    }
+
+    setExposed(index){
+        this.exposedIndex = index;
+        document.querySelector('body').classList.toggle('no-scroll');
     }
 
     requestSelection(block) {
