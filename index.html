@@ -1,25 +1,38 @@
+<!doctype>
 <html>
-  <head>
-    <title>Angular 2 QuickStart JS</title>
+<head>
+    <base href="/">
+    <title>Angular 2 Boilerplate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles.css">
-    <!-- 1. Load libraries -->
-    <!-- IE required polyfill -->
+    <!-- Load libraries -->
+    <!-- IE required polyfills, in this exact order -->
     <script src="node_modules/es6-shim/es6-shim.min.js"></script>
-    <script src="node_modules/zone.js/dist/zone.js"></script>
-    <script src="node_modules/reflect-metadata/Reflect.js"></script>
-    <script src="node_modules/rxjs/bundles/Rx.umd.js"></script>
-    <script src="node_modules/@angular/core/core.umd.js"></script>
-    <script src="node_modules/@angular/common/common.umd.js"></script>
-    <script src="node_modules/@angular/compiler/compiler.umd.js"></script>
-    <script src="node_modules/@angular/platform-browser/platform-browser.umd.js"></script>
-    <script src="node_modules/@angular/platform-browser-dynamic/platform-browser-dynamic.umd.js"></script>
-    <!-- 2. Load our 'modules' -->
-    <script src='app/app.component.js'></script>
-    <script src='app/main.js'></script>
-  </head>
-  <!-- 3. Display the application -->
-  <body>
-    <my-app>Loading...</my-app>
-  </body>
+    <script src="node_modules/systemjs/dist/system-polyfills.js"></script>
+    <script src="node_modules/angular2/es6/dev/src/testing/shims_for_IE.js"></script>
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.js"></script>
+    <script src="node_modules/angular2/bundles/router.dev.js"></script>
+    <script src="node_modules/angular2/bundles/http.js"></script>
+
+
+    <link rel="stylesheet" href="src/css/app.css">
+</head>
+<body>
+<my-app>Loading...</my-app>
+
+<script>
+    System.config({
+        packages: {
+            app: {
+                format: 'register',
+                defaultExtension: 'js'
+            }
+        }
+    });
+    System.import('app/boot')
+            .then(null, console.error.bind(console));
+</script>
+</body>
 </html>
