@@ -4,3 +4,4 @@ import {AppComponent} from "./components/app-content.component";
 import { HTTP_PROVIDERS }    from 'angular2/http';
 
 bootstrap(AppComponent, [HTTP_PROVIDERS]);
+

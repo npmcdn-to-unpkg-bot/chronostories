@@ -12,20 +12,35 @@ export class StoryBlockService{
 
     }
 
-    getStoryBlocks() : Observable<Object[]> {
-        return Observable.of(STORYBLOCKS);
+    getStoryBlocks() : Observable<StoryBlock[]> {
+        return this.http.get('/storyblocks/')
+            .map(res => res.json());
     }
-    
+
     saveStoryBlock(storyBlock:StoryBlock) : Observable<StoryBlock[]> {
-        //TODO
-        return  null;
+        if(!!storyBlock._id){
+            return this.http.put('/storyblocks/'+storyBlock._id, JSON.stringify(storyBlock))
+                .map(res => res.json());
+        }
+        else {
+            return this.http.post('/storyblocks/', JSON.stringify(storyBlock))
+                .map(res => res.json());
+        }
     }
 
     deleteStoryBlock(storyBlock:StoryBlock) : Observable<StoryBlock[]> {
-
-        //TODO
-        return  null;
+        if(!!storyBlock._id){
+            return this.http.delete('/storyblocks/'+storyBlock._id)
+                .map(res => res.json());
+        }
+        return null;
     }
 
+    generateTestData() {
+        var mockData = STORYBLOCKS;
 
+        for(var i=0;  i< mockData.length; i++) {
+            this.http.post('/storyblocks/', JSON.stringify(mockData[i]));
+        }
+    }
 }

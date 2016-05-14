@@ -1,5 +1,5 @@
 export interface StoryBlock {
-    _id:string,
+    _id: string,
     blockId:number,
     title:string,
     description:string,

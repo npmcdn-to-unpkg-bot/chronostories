@@ -4,8 +4,32 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var database = require('./app/config/database');
 var appRoutes = require('./app/routes/main-routes');
+var storyBlocksRouter = require('./app/routes/storyblock-routes');
 var app = express();
+
+mongoose.connect(database.url);
+setTimeout(function () {
+    console.log(mongoose.connection.readyState);
+}, 5000);
+
+// CONNECTION EVENTS
+// When successfully connected
+mongoose.connection.on('connected', function () {
+    console.log('Mongoose default connection open');
+});
+
+// If the connection throws an error
+mongoose.connection.on('error', function (err) {
+    console.log('Mongoose default connection error: ' + err);
+});
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function () {
+    console.log('Mongoose default connection disconnected');
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +51,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', appRoutes);
+app.use('/storyblocks', storyBlocksRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

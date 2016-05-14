@@ -31,16 +31,16 @@ import {TimelineComponent} from "./timeline.component";
 })
 
 export class AppComponent implements OnInit {
-    public storyBlocks:Object[];
+    public storyBlocks:StoryBlock[];
     @Output() scrollWheel:EventEmitter<any> = new EventEmitter();
     zoomLevel = 10;
     public selectedIndex = 0;
     scrollValue = document.body.scrollTop;
-    public selectedBlock;
+    public selectedBlock:StoryBlock;
     public token:string = '';
 
-    constructor(private storyBlockService:StoryBlockService) {
 
+    constructor(private storyBlockService:StoryBlockService) {
     }
 
     ngOnInit():any {
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
                 this.selectedBlock = this.storyBlocks[this.selectedIndex]
             },
             err => console.error(err),
-            () => console.log('done')
+            () => console.log('done, loaded '+this.storyBlocks.length +' blocks')
         );
 
     }

@@ -30,7 +30,7 @@ gulp.task('build-ts', function () {
         .pipe(sourcemaps.write())
         // .pipe(jsuglify())
         .pipe(concat('bundle.js'))
-        .pipe(gulp.dest(assetsProd + 'js/app/'));  
+        .pipe(gulp.dest(assetsProd + 'js/app/'));
 });
 
 

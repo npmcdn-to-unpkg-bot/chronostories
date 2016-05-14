@@ -40,7 +40,7 @@ export class StoryBlockComponent implements OnInit {
     @Output() exitHeaderEvent:EventEmitter<any> = new EventEmitter();
 
     constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService: StoryBlockService) {
-
+        storyBlockService.generateTestData();
     }
 
     @Input()
