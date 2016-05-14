@@ -1,0 +1,43 @@
+.material-shadow {
+  @include shadows(0 0 4px 0 rgba($black, .12), 0 4px 4px 0 rgba($black, .24));
+  &.light {
+    @include shadows(0 0 2px 0 rgba($black, .12), 0 2px 2px 0 rgba($black, .24));
+  }
+  &.dark {
+    @include shadows(0 0 8px 0 rgba($black, .12), 0 8px 8px 0 rgba($black, .24));
+  }
+}
+
+.button {
+  margin: 0 4px;
+  color: $white;
+  font-size: 14px;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  cursor: pointer;
+  &.inline-button {
+    display: inline-block;
+    padding: 0 8px;
+    line-height: 24px;
+    &.primary {
+      background: none;
+      color: $dodger-blue;
+      &:active {
+        background: rgba($dodger-blue, .4);
+      }
+    }
+    &.alert {
+      background: none;
+      color: $punch;
+      &:active {
+        background: rgba($punch, .4);
+      }
+    }
+  }
+  &.primary {
+    background: $dodger-blue;
+  }
+  &.alert {
+    background: $punch;
+  }
+}

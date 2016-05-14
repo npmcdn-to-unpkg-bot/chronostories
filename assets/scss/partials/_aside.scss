@@ -1,0 +1,21 @@
+aside {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: $aside-width;
+  padding: $gutter $gutter (44px + $gutter*2) $gutter;
+  color: $white;
+  background: $mountain-meadow;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: $gutter;
+    display: block;
+    height: 44px;
+    background: url('/img/logo.png') no-repeat center center;
+    background-size: 79px 44px;
+  }
+}

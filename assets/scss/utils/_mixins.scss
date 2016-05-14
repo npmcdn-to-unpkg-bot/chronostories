@@ -1,0 +1,147 @@
+/* BOX MODEL */
+@mixin box-sizing($type:border-box) {
+  -webkit-box-sizing: $type; // Android < 2.3, iOS < 4
+  -moz-box-sizing: $type;
+  box-sizing: $type; // Chrome, IE 8+, Opera, Safari 5.1
+}
+
+/* LAYOUT */
+@mixin flexbox() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+@mixin flex($values) {
+  -webkit-box-flex: $values;
+  -moz-box-flex:  $values;
+  -webkit-flex:  $values;
+  -ms-flex:  $values;
+  flex:  $values;
+}
+@mixin flex-flow($values) {
+  -webkit-flex-flow: $values;
+  -moz-flex-flow: $values;
+  -ms-flex-flow: $values;
+  flex-flow: $values;
+}
+@mixin order($val) {
+  -webkit-box-ordinal-group: $val;
+  -moz-box-ordinal-group: $val;
+  -ms-flex-order: $val;
+  -webkit-order: $val;
+  order: $val;
+}
+@mixin align-items($val) {
+  $IEval: $val;
+  @if $val == flex-start {
+    $IEval: start;
+  }
+  @else if $val == flex-end {
+    $IEval: end;
+  }
+  //-webkit-flex-align: $val;
+  -ms-flex-align: $IEval;
+  -webkit-align-items: $val;
+  align-items: $val;
+}
+@mixin align-self($val) {
+  @if $val == flex-start {
+    $IEval: start;
+  }
+  @else if $val == flex-end {
+    $IEval: end;
+  }
+  @else {
+    $IEval: $val;
+  }
+  -webkit-align-self: $val;
+  -ms-flex-item-align: $IEval;
+  //-webkit-align-item-align: $val;
+  align-self: $val;
+}
+@mixin justify-content($val) {
+  $IEval: $val;
+  @if $val == space-between {
+    $IEval: justify
+  }
+  @else if $val == space-around {
+    $IEval: distribute;
+  }
+  @else if $val == flex-start {
+    $IEval: start;
+  }
+  @else if $val == flex-end {
+    $IEval: end;
+  }
+  -webkit-justify-content: $val;
+  -ms-flex-pack: $IEval;
+  justify-content: $val;
+}
+
+// TRANSITIONS AND TRANSOFMS
+@mixin transition($props, $duration:.4s) {
+  $transition: unquote('');
+  @each $prop in $props {
+    $transition: $transition unquote('#{$prop} #{$duration}');
+    // Add comma if not dealing with the last item of list
+    @if $prop != nth($props, length($props)) {
+      $transition: $transition unquote(',');
+    }
+  }
+  -webkit-transition: $transition;
+  -moz-transition: $transition;
+  -o-transition: $transition;
+  transition: $transition;
+}
+@mixin translateX($translation) {
+  -webkit-transform: translateX($translation);
+  -ms-transform: translateX($translation);
+  transform: translateX($translation);
+}
+@mixin translateY($translation) {
+  -webkit-transform: translateY($translation);
+  -ms-transform: translateY($translation);
+  transform: translateY($translation);
+}
+@mixin translateZ($translation) {
+  -webkit-transform: translateY($translation);
+  -ms-transform: translateY($translation);
+  transform: translateY($translation);
+}
+@mixin translateXY($translationX, $translationY) {
+  -webkit-transform: translate($translationX, $translationY);
+  -ms-transform: translate($translationX, $translationY);
+  transform: translate($translationX, $translationY);
+}
+@mixin transform($values...){
+  -webkit-transform: $values;
+  -ms-transform: $values;
+  transform: $values;
+}
+
+/* STYLES */
+@mixin rounded($radius: $corners){
+  border-radius: $radius;
+  -moz-border-radius: $radius;
+  -webkit-border-radius: $radius;
+  -khtml-border-radius: $radius;
+}
+
+@mixin shadows($values...) {
+  -webkit-box-shadow: $values;
+  -moz-box-shadow: $values;
+  box-shadow: $values;
+}
+
+@mixin linear-gradient($from_colour, $from_perc, $to_colour, $to_perc:100%){
+  background-color: $from_colour;
+  background: -moz-linear-gradient(top, $from_colour $from_perc, $to_colour $to_perc);
+  background: -webkit-gradient(left top, left bottom, color-stop($from_perc, $from_colour), color-stop($to_perc, $to_colour));
+  background: -webkit-linear-gradient(top, $from_colour $from_perc, $to_colour $to_perc);
+  background: -o-linear-gradient(top, $from_colour $from_perc, $to_colour $to_perc);
+  background: -ms-linear-gradient(top, $from_colour $from_perc, $to_colour $to_perc);
+  background: linear-gradient(to bottom, $from_colour $from_perc, $to_colour $to_perc);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$from_colour', endColorstr='$to', GradientType=0 );
+}

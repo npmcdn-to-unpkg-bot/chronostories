@@ -1,0 +1,20 @@
+.timeline {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: $timeline-scrollable-area;
+  left: $timeline-left-padding + $storyblock-circle-size/2 + $timeline-width/2 - $timeline-scrollable-area/2;
+}
+
+.timeline-block {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  width: $timeline-width;
+  left: $timeline-left-padding + $storyblock-circle-size/2 - $timeline-width/2;
+  background: $cadet-blue;
+
+  &:hover {
+    cursor: ns-resize;
+  }
+}

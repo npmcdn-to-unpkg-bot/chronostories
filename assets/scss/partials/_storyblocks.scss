@@ -1,0 +1,159 @@
+.story-block {
+  width: 100%;
+  position: absolute;
+  padding-left: $timeline-left-padding;
+  @include flexbox();
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    @include rounded(50%);
+  }
+
+  &::before {
+    width: $storyblock-circle-size - 4px;
+    height: $storyblock-circle-size - 4px;
+    left: $timeline-left-padding + 2px;
+    top: 5px + 2px;
+    border: 2px $white solid;
+    z-index: 2;
+
+  }
+
+  &::after {
+    width: $storyblock-circle-size;
+    height: $storyblock-circle-size;
+    left: $timeline-left-padding;
+    top: 5px;
+    border: 2px $cadet-blue solid;
+    z-index: 1;
+  }
+
+  .index {
+    color: $white;
+    background-color: $mountain-meadow;
+    position: relative;
+    top: 5px;
+    width: $storyblock-circle-size;
+    height: $storyblock-circle-size;
+    z-index: 1;
+    max-width: 100%;
+    min-width: 0;
+    @extend .slab;
+    @include rounded(50%);
+    @include flexbox();
+    @include justify-content(center);
+    @include align-items(center);
+    @include flex(0 0 $storyblock-circle-size);
+
+    span {
+      font-size: 14px;
+    }
+
+    &:hover {
+      cursor: ns-resize;
+    }
+  }
+
+  .text-container {
+    padding: 10px $gutter;
+    position: relative;
+    background: $white;
+    margin: 0 $gutter;
+    max-width: 100%;
+    min-width: 0;
+    @extend .material-shadow.light;
+    @include flex(1 1);
+    @include rounded();
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      top: $storyblock-circle-size/2; // It should be this size -5px which is triangle size +5px which is index margin from top
+      left: -5px;
+      border: 5px solid black;
+      border-color: transparent transparent $white $white;
+      box-shadow: -2px 2px 2px 0 rgba(0, 0, 0, 0.12);
+      @include transform(rotate(45deg));
+    }
+
+    .title {
+      font-size: 16px;
+      margin-bottom: 6px;
+      @extend .slab;
+
+      span {
+        font-weight: 800;
+        margin: 0 5px 0 5px;
+      }
+    }
+    .description {
+      position: relative;
+      font-size: 13px;
+      line-height: 1.5;
+      opacity: .75;
+      height: 13px * 1.5 * 3;
+      width: 100%;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        text-align: right;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 70%;
+        height: 13px * 1.5;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+      }
+    }
+    .actions {
+      text-align: right;
+      margin-top: $gutter/2;
+    }
+  }
+}
+
+.story-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: $aside-width;
+  height: $header-height;
+  background-color: $bluewood;
+  @extend .material-shadow.light;
+
+  .index {
+    z-index: 1;
+  }
+
+  .text-container {
+    left: 4px;
+    height: 100%;
+    padding-top: $gutter;
+    overflow: hidden;
+    position: relative;
+
+    .title {
+      color: $white;
+      margin-bottom: 12px;
+      @include flexbox();
+      @include flex(1 0 auto);
+    }
+
+    .description {
+      color: $contrast-header-color;
+
+      .fading {
+        position: absolute;
+        top: $gutter + 42px; // padding from top + title size
+        bottom: 0;
+        left: 0;
+        right: 0;
+        @include linear-gradient($header-bg-color-transparent, 0%, $bluewood, 80%);
+      }
+    }
+  }
+}

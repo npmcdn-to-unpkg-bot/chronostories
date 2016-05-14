@@ -1,0 +1,30 @@
+/* Plain colours */
+$black: #000000;
+$athens-grey: #F9FAFB;
+$cadet-blue: #A4B9C4;
+$white: #FFFFFF;
+
+$mountain-meadow: #1ABC9C;
+$bluewood: #2C3E50;
+$dodger-blue: #0FA9F9;
+$punch: #DD4B39;
+
+/* Domain colours */
+$bg-color: $athens-grey;
+$contrast-bg-color: rgba(0, 0, 0, 1);
+$header-bg-color-transparent: rgba(34, 34, 34, 0);
+$contrast-header-color: rgba(221, 221, 221, 1);
+$story-block-bg-color: rgba(200, 200, 200, 0.3);
+
+/* Grid */
+$gutter: 20px;
+
+/* Dimensions */
+$aside-width: 240px;
+$header-height: 250px;
+$storyblock-circle-size: 36px;
+$timeline-left-padding: 30px;
+$timeline-width: 2px;
+$timeline-scrollable-area: 80px;
+
+$corners: 4px;

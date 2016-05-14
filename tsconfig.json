@@ -8,16 +8,15 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": false,
-    "outDir": "./app"
+    "outDir": "../public/js/app",
+    "outFile": "bundle.js"
   },
   "filesGlob": [
     "./dev/**/*.ts",
     "!./node_modules/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "typings/main",
-    "typings/main.d.ts"
+    "node_modules"
   ],
   "atom": {
     "rewriteTsconfig": true
