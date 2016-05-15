@@ -3,6 +3,7 @@ import {UtilsService} from "../services/utils.service";
 import {AnimationBuilder} from "angular2/src/animate/animation_builder";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockService} from "../services/storyblocks.service";
+import {Configuration} from "../config/configuration";
 
 @Component({
     selector: 'storyblock',
@@ -21,7 +22,7 @@ import {StoryBlockService} from "../services/storyblocks.service";
             </div>
         </div>
     `,
-    providers: [UtilsService, StoryBlockService],
+    providers: [UtilsService, StoryBlockService, Configuration],
     inputs: ['storyBlockInfo', 'index']
 })
 
@@ -34,9 +35,6 @@ export class StoryBlockComponent implements OnInit {
     public _selected = false;
     private _zoomLevel = 10;
     private _previousZoomLevel = 10;
-    private _zoomStrength = 5;
-    private _zoomOffset = 0;
-    private _zoomStep = 85;
     private storyBlockLocalSave:StoryBlock;
 
     @Output() zoomEvent:EventEmitter<any> = new EventEmitter();
@@ -45,18 +43,23 @@ export class StoryBlockComponent implements OnInit {
     @Output() exitHeaderEvent:EventEmitter<any> = new EventEmitter();
     @Output() removeStoryBlockEvent:EventEmitter<any> = new EventEmitter();
 
-    constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService: StoryBlockService) {
+    constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService:StoryBlockService, private configuration:Configuration) {
     }
 
     @Input()
     set zoomLevel(value:number) {
-        this._previousZoomLevel = (this._previousZoomLevel == undefined)? 10:this._previousZoomLevel;
-        this._zoomLevel = (this._zoomLevel == undefined)? 10:this._zoomLevel;
+        this._previousZoomLevel = (this._previousZoomLevel == undefined) ? 10 : this._previousZoomLevel;
+        this._zoomLevel = (this._zoomLevel == undefined) ? 10 : this._zoomLevel;
         if (this._zoomLevel != value) {
             this._previousZoomLevel = this._zoomLevel;
             this._zoomLevel = value;
             this.zoomChanged();
         }
+    }
+
+    @Input()
+    set exposedIndex(value:number){
+        this._exposed = (value == this.index);
     }
 
     ngOnInit():any {
@@ -71,7 +74,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     zoomChanged() {
-        console.log('[StoryBlock #' + this.index + '] Zoom changed from ' + this._previousZoomLevel + ' to ' + this._zoomLevel);
+        // console.log('[StoryBlock #' + this.index + '] Zoom changed from ' + this._previousZoomLevel + ' to ' + this._zoomLevel);
 
         if (this._zoomLevel < this.storyBlockInfo.importance) {
             this.fadeOut(1000);
@@ -84,7 +87,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     fadeIn(speed:number) {
-        console.log('[StoryBlock #' + this.index + '] Fading in...');
+        // console.log('[StoryBlock #' + this.index + '] Fading in...');
         let animation = this._ab.css();
 
         var fromStyle = {};
@@ -115,8 +118,8 @@ export class StoryBlockComponent implements OnInit {
     }
 
     fadeOut(speed:number) {
-        if(this._active) {
-            console.log('[StoryBlock #' + this.index + '] Fading out...['+this._zoomLevel +'<'+ this.storyBlockInfo.importance+']');
+        if (this._active) {
+            // console.log('[StoryBlock #' + this.index + '] Fading out...[' + this._zoomLevel + '<' + this.storyBlockInfo.importance + ']');
             let animation = this._ab.css();
 
             var fromStyle = {};
@@ -151,21 +154,21 @@ export class StoryBlockComponent implements OnInit {
     changePositionOnZoom(speed) {
         let animation = this._ab.css();
         var fromStyle = {
-            top: this._zoomOffset + ((this._zoomStep + (this._previousZoomLevel * this._zoomStrength)) * this.storyBlockInfo.timePosition) + 'px'
+            top: this.configuration.zoom.offset + ((this.configuration.zoom.step + (this._previousZoomLevel * this.configuration.zoom.strength)) * this.storyBlockInfo.timePosition) + 'px'
         };
 
         var toStyle = {
-            top: this._zoomOffset + ((this._zoomStep + (this._zoomLevel * this._zoomStrength)) * this.storyBlockInfo.timePosition) + 'px'
+            top: this.configuration.zoom.offset + ((this.configuration.zoom.step + (this._zoomLevel * this.configuration.zoom.strength)) * this.storyBlockInfo.timePosition) + 'px'
         };
 
-        console.log('[StoryBlock #' + this.index + '] Changing position from '+(fromStyle.top)+' to '+(toStyle.top)+' ...');
+        // console.log('[StoryBlock #' + this.index + '] Changing position from ' + (fromStyle.top) + ' to ' + (toStyle.top) + ' ...');
 
         if (this._zoomLevel > this.storyBlockInfo.importance) {
-            console.log('[StoryBlock #' + this.index + '] ...and fading in ['+this._zoomLevel+'>'+this.storyBlockInfo.importance+']');
+            // console.log('[StoryBlock #' + this.index + '] ...and fading in [' + this._zoomLevel + '>' + this.storyBlockInfo.importance + ']');
             toStyle['opacity'] = 1;
         }
-        else{
-            console.log('[StoryBlock #' + this.index + '] ...and fading out');
+        else {
+            // console.log('[StoryBlock #' + this.index + '] ...and fading out');
             toStyle['opacity'] = 0;
         }
 
@@ -180,7 +183,7 @@ export class StoryBlockComponent implements OnInit {
 
 
         if (!!this._actionTimeout) {
-            console.log('[StoryBlock #' + this.index + '] Animation removed');
+            // console.log('[StoryBlock #' + this.index + '] Animation removed');
             clearTimeout(this._actionTimeout);
         }
 
@@ -192,7 +195,7 @@ export class StoryBlockComponent implements OnInit {
         }, 100);
     }
 
-    focus(){
+    focus() {
         var native = this._e.nativeElement;
         var container = null;
         var textarea = null;
@@ -202,7 +205,7 @@ export class StoryBlockComponent implements OnInit {
                 break;
             }
         }
-        if(!!container) {
+        if (!!container) {
             for (var i = 0; i < container.childNodes.length; i++) {
                 if ((container.childNodes[i].className || '').indexOf("description") > -1) {
                     textarea = container.childNodes[i];
@@ -217,42 +220,48 @@ export class StoryBlockComponent implements OnInit {
         }
     }
 
-    edit(index, event){
+    edit(index, event) {
+        console.log('Saving temporary data ' + this.storyBlockInfo);
         this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
-        this._exposed = true;
         this.exposeEvent.emit(index);
         this.focus();
     }
 
-    remove(index, event){
+    remove(index, event) {
         console.log('Should remove', index, event);
         this.storyBlockService.deleteStoryBlock(this.storyBlockInfo).subscribe(
             data => {
                 console.log(data)
             },
             () => {
-                console.log('done');
+                console.log('Removing block index ' +this.index);
                 this.removeStoryBlockEvent.emit(this.index);
             }
         );
     }
 
-    save(index, event){
+    save(index, event) {
         console.log('Should save', index, event);
         this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
             data => {
-                console.log(data)
+                this.storyBlockInfo = <StoryBlock>data;
+                console.log('Saving temporary data ' + this.storyBlockInfo);
+                this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
             },
             () => {
-                console.log('saved');
-                this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
+                console.log('Saved');
             }
         );
     }
 
-    cancel(){
-        this._exposed = false;
+    cancel() {
         this.exposeEvent.emit(-1);
-        this.storyBlockInfo = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockLocalSave));
+        if (!!this.storyBlockLocalSave) {
+            this.storyBlockInfo = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockLocalSave));
+        }
+        else{
+            console.log('Removing block index ' +this.index);
+            this.removeStoryBlockEvent.emit(this.index);
+        }
     }
 }

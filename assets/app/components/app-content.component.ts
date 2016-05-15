@@ -8,6 +8,7 @@ import {AddButtonComponent} from "./add-button.component";
 import {SidebarComponent} from "./sidebar.component";
 import {AuthFormComponent} from "./auth-form.component";
 import {User} from "../models/user";
+import {Configuration} from "../config/configuration";
 // import {LocalStorage} from "angular2-localstorage/LocalStorage";
 
 @Component({
@@ -20,6 +21,7 @@ import {User} from "../models/user";
                     [index]="i" 
                     [storyBlockInfo]="storyBlock" 
                     [zoomLevel]="zoomLevel"
+                    [exposedIndex]="exposedIndex"
                     [ngClass]="{exposed: exposedIndex == i}"
                     (removeStoryBlockEvent)="removeStoryBlock($event)" 
                     (exposeEvent)="setExposed($event)" 
@@ -28,6 +30,7 @@ import {User} from "../models/user";
                     class="story-block"></storyblock>
             </div>
             <div class="timeline"
+                (click)="addStoryBlock($event)"
                 (mouseenter)="onMouseEnter($event)"
                 (mouseleave)="onMouseLeave($event)"
                 (mousemove)="onMouseMove($event)">
@@ -48,7 +51,7 @@ import {User} from "../models/user";
         </aside>
         <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
     `,
-    providers: [StoryBlockService],
+    providers: [StoryBlockService, Configuration],
     directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, SidebarComponent, AuthFormComponent, NgClass]
 })
 
@@ -64,8 +67,9 @@ export class AppComponent implements OnInit {
     public selectedBlock:StoryBlock;
     public token:string = '';
     public accessFormVisible = false;
+    private maxIndex = 0;
 
-    constructor(private storyBlockService:StoryBlockService) {
+    constructor(private storyBlockService:StoryBlockService, private configuration:Configuration) {
     }
 
     ngOnInit():any {
@@ -89,66 +93,87 @@ export class AppComponent implements OnInit {
             data => {
                 this.storyBlocks = data;
                 this.selectedBlock = this.storyBlocks[this.selectedIndex]
+                this.maxIndex = 0;
+
+                for (var i = 0; i < this.storyBlocks.length; i++) {
+                    this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
+                }
             },
             err => console.error(err),
             () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks')
         );
     }
 
-    removeStoryBlock(index){
+    removeStoryBlock(index) {
         this.storyBlocks.splice(index, 1);
     }
 
-    showAccessForm(){
+    showAccessForm() {
         this.accessFormVisible = true;
         document.querySelector('body').classList.add('no-scroll');
     }
 
-    hideAccessForm(){
+    hideAccessForm() {
         this.accessFormVisible = false;
         document.querySelector('body').classList.remove('no-scroll');
     }
 
-    zoomIn(){
-        if(this.zoomLevel < 10) {
+    zoomIn() {
+        if (this.zoomLevel < 10) {
             this.zoomLevel++;
         }
     }
 
-    zoomOut(){
-        if(this.zoomLevel > 0) {
+    zoomOut() {
+        if (this.zoomLevel > 0) {
             this.zoomLevel--;
         }
     }
 
-    onMouseEnter(event){
+    onMouseEnter(event) {
         this.addButton = {
             visible: true,
             top: event.y
         };
     }
 
-    onMouseLeave(event){
+    onMouseLeave(event) {
         this.addButton = {
             visible: false,
             top: 0
         };
     }
 
-    onMouseMove(event){
-        if(this.addButton.visible) {
+    onMouseMove(event) {
+        if (this.addButton.visible) {
             this.addButton.top = event.y;
         }
     }
 
-    addStoryBlock(event){
+    addStoryBlock(event) {
         this.addButton = {
             visible: false,
             top: 0
         };
+
+        var zoomConversionFactor = this.configuration.zoom.step + (this.zoomLevel * this.configuration.zoom.strength);
+        var positionAtZoom = ((event.pageY - this.configuration.zoom.offset) / zoomConversionFactor);
+        var newStoryBlock:StoryBlock = <StoryBlock> {
+            blockId: this.maxIndex + 1,
+            title: '',
+            description: '',
+            timePosition: positionAtZoom,
+            importance: 3
+        };
+        this.maxIndex++;
+        this.storyBlocks.push(newStoryBlock);
+        console.log('Adding block index ' + (this.storyBlocks.length - 1));
+        this.setExposed(this.storyBlocks.length - 1);
+        event.preventDefault();
+        event.stopPropagation();
     }
 
-    setExposed(index){
+    setExposed(index) {
         this.exposedIndex = index;
         document.querySelector('body').classList.toggle('no-scroll');
     }

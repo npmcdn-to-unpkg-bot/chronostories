@@ -13,11 +13,11 @@ router.post('/', function (req, res, next) {
     console.log('router.post');
     var data = JSON.parse(req.body.data);
     console.log(data);
-    StoryBlockModel.create(data, function (err) {
+    StoryBlockModel.create(data, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
-        return res.status;
+        res.json(storyBlock);
     });
 });
 
