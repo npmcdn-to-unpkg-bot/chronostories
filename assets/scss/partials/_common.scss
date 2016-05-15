@@ -22,3 +22,7 @@ app-content {
   @include flexbox();
   @include flex-flow(row nowrap);
 }
+
+.capital-letter {
+  text-transform: capitalize;
+}

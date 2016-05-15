@@ -6,27 +6,41 @@ import {StoryBlockType} from "../models/storyblock-type";
 @Component({
     selector:'sidebar',
     template: `
-        <div class="sidebar-action" *ngIf="_index == -1">
-            <a class="create-storyblock" draggable="true" (dragstart)="dragStart($event)" (dragend)="dragEnd($event)">Create storyblock</a>
+        <div *ngIf="_index == -1">
+            <div class="sidebar-action">
+                <a class="create-storyblock" draggable="true" (dragstart)="dragStart($event)" (dragend)="dragEnd($event)">Create storyblock</a>
+            </div>
+            <div class="sidebar-action">
+                <small><strong>Total chapters:</strong> {{_storyBlocksLength}}</small>
+            </div>
         </div>
-        <div class="sidebar-action" *ngIf="_index >= 0 && !!_storyBlock">
-            <div class="form-group">
-                <label>Storyblock type</label>
-                <div class="select-wrapper">
-                    <select [(ngModel)]="_storyBlock.type">
-                        <option *ngFor="#storyBlockType of storyBlockTypes" value={{storyBlockType.id}}>{{storyBlockType.name}}</option>
-                    </select>
+        <div *ngIf="_index >= 0 && !!_storyBlock">
+            <div class="sidebar-action">
+                <h3><span class="capital-letter">{{_storyBlock.type}}</span> {{_index}}</h3>
+            </div>
+            <div class="sidebar-action">
+                <div class="form-group">
+                    <label>Storyblock type</label>
+                    <div class="select-wrapper">
+                        <select [(ngModel)]="_storyBlock.type">
+                            <option *ngFor="#storyBlockType of storyBlockTypes" value={{storyBlockType.id}}>{{storyBlockType.name}}</option>
+                        </select>
+                    </div>
                 </div>
+            </div>
+            <div class="sidebar-action">
+                <small><strong>Total characters:</strong> {{_storyBlock.description.length}}</small>
             </div>
         </div>
     `,
-    inputs: ['storyBlock']
+    inputs: ['storyBlock', 'storyBlocksLength']
 })
 export class SidebarComponent implements OnInit {
     public storyBlockTypes:StoryBlockType[];
     
     public _index: number;
     public _storyBlock;
+    public _storyBlocksLength;
     public _subscription: any;
 
     @Output() startDragging:EventEmitter<any> = new EventEmitter();
@@ -34,8 +48,12 @@ export class SidebarComponent implements OnInit {
 
     constructor(private _storyBlockService:StoryBlockService) {}
     @Input()
-    set storyBlock(storyBlock){
+    set storyBlock(storyBlock) {
         this._storyBlock = storyBlock;
+    }
+    @Input()
+    set storyBlocksLength(storyBlocksLength){
+        this._storyBlocksLength = storyBlocksLength;
     }
     ngOnInit() {
         this.storyBlockTypes = this._storyBlockService.getStoryBlockTypes();

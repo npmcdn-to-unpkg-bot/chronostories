@@ -52,7 +52,7 @@ import {AuthFormComponent} from "./auth-form.component";
             <sidebar
             (startDragging)="toggleMenu(false)"
             (endDragging)="addStoryBlock($event)"
-            [storyBlock]="exposedStoryBlock"></sidebar>
+            [storyBlock]="exposedStoryBlock" [storyBlocksLength]="storyBlocks.length"></sidebar>
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
             <a class="user-aside" *ngIf="!isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
             <a class="user-aside" *ngIf="isLoggedIn()" (click)="logOut()">Logout</a>
@@ -91,6 +91,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit():any {
+        this.storyBlocks = [];
         this.userId = this.authUser();
         this.getStoryBlockTypes();
         this.getStoryBlocks(this.userId);
