@@ -14,7 +14,7 @@ import {Configuration} from "../config/configuration";
             <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..."></textarea>
             <div class="default-actions">
                 <a (click)="edit(index, $event)" class="button inline-button primary">Edit</a>
-                <a (click)="remove(index, $event)" class="button inline-button alert">Remove</a>
+                <a (click)="remove(index, $event)" [ngClass]="{disabled:!hasId()}" class="button inline-button alert">Remove</a>
             </div>
             <div class="exposed-actions">
                 <a (click)="save(index, $event)" class="button inline-button primary">Save</a>
@@ -108,6 +108,10 @@ export class StoryBlockComponent implements OnInit {
         _self._actionTimeout = setTimeout(function () {
             animation.start(_self._e.nativeElement);
         }, 100);
+    }
+
+    hasId() {
+        return !!((this.storyBlockInfo || {_id:undefined})._id);
     }
 
     fadeOut(speed:number) {

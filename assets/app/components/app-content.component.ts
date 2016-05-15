@@ -262,7 +262,7 @@ export class AppComponent implements OnInit {
         };
         this.maxIndex++;
 
-        var tmpArrayPos = undefined;
+        var tmpArrayPos = 0;
 
         for (var i = 0; i < this.storyBlocks.length; i++) {
             if (this.storyBlocks[i].timePosition > positionAtZoom) {
@@ -275,11 +275,14 @@ export class AppComponent implements OnInit {
 
         console.log('Adding block index ' + tmpArrayPos);
         this.setExposed(tmpArrayPos);
+
+
         event.preventDefault();
         event.stopPropagation();
     }
 
     setExposed(index) {
+        console.log('Setting block '+index+' exposed');
         this.recalculateStoryBlockNumbers();
         this.exposedIndex = index;
         this.exposedStoryBlock = index >= 0 ? this.storyBlocks[index] : null;

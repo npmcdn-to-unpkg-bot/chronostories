@@ -24,6 +24,12 @@
     &.primary {
       background: none;
       color: $dodger-blue;
+
+      &.disabled {
+        pointer-events: none;
+        color: $alto;
+      }
+
       &:active {
         background: rgba($dodger-blue, .24);
       }
@@ -31,9 +37,16 @@
     &.alert {
       background: none;
       color: $punch;
+
+      &.disabled {
+        pointer-events: none;
+        color: $alto;
+      }
+
       &:active {
         background: rgba($punch, .24);
       }
+
     }
     &.secondary {
       background: none;
@@ -42,6 +55,7 @@
         background: rgba($bluewood, .24);
       }
     }
+
   }
   &.block-button {
     display: block;
