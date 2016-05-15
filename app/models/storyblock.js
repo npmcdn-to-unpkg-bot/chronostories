@@ -7,7 +7,8 @@ var StoryBlockSchema = new mongoose.Schema({
     timePosition: Number,
     importance: Number,
     blockNumber: Number,
-    type: String
+    type: String,
+    userId: String
 });
 
 module.exports = mongoose.model('StoryBlocks', StoryBlockSchema);

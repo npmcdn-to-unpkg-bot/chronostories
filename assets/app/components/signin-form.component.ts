@@ -54,6 +54,7 @@ export class SignInComponent {
     @Output() closeModal:EventEmitter<any> = new EventEmitter();
     @Output() swapWindow:EventEmitter<any> = new EventEmitter();
     @Output() notify:EventEmitter<any> = new EventEmitter();
+    @Output() authStatus:EventEmitter<any> = new EventEmitter();
 
     constructor(private authService:AuthService, private builder:FormBuilder, private webStorageService:WebStorageService, private configuration:Configuration) {
         this.user = new User();
@@ -89,6 +90,7 @@ export class SignInComponent {
                 },
                 () => {
                     console.log('logged in');
+                    this.authStatus.emit('Login');
                     this.close('');
                 });
         }

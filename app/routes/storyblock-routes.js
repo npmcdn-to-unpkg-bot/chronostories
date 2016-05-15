@@ -2,10 +2,11 @@ var express = require('express');
 var router = express.Router();
 var StoryBlockModel = require('../models/storyblock');
 
-router.get('/', function (req, res) {
+router.get('/:userid', function (req, res) {
     console.log('router.get');
+    var userId = req.params.userid;
     StoryBlockModel.find(
-        {},
+        { userId: userId },
         null,
         {
             sort : 'timePosition'
@@ -15,10 +16,12 @@ router.get('/', function (req, res) {
         })
 });
 
-router.get('/:id', function (req, res, next) {
-    console.log('router.get id');
-    var id = req.params.id;
-    StoryBlockModel.findById(id, function (err, storyBlock) {
+router.get('/:userid/:blockid', function (req, res, next) {
+    console.log('router.get userid');
+    var userId = req.params.userid;
+    var blockId = req.params.blockid;
+
+    StoryBlockModel.find({_id : blockId, userId : userId}, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
@@ -26,10 +29,14 @@ router.get('/:id', function (req, res, next) {
     });
 });
 
-router.post('/', function (req, res, next) {
-    console.log('router.post');
+router.post('/:userid', function (req, res, next) {
     var data = JSON.parse(req.body.data);
-    console.log(data);
+    var userId = req.params.userid;
+
+    //TODO:add check of the existence of the user
+
+    data.userId = userId;
+
     StoryBlockModel.create(data, function (err, storyBlock) {
         if (err) {
             console.log(err);
@@ -38,11 +45,14 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.put('/:id', function (req, res, next) {
+router.put('/:userid/:blockid', function (req, res, next) {
     console.log('router.put id');
-    var id = req.params.id;
+    var userId = req.params.userid;
+    var blockId = req.params.blockid;
+
     var data = JSON.parse(req.body.data);
-    StoryBlockModel.findOneAndUpdate({_id: id}, data, function (err, storyBlock) {
+
+    StoryBlockModel.findOneAndUpdate({_id : blockId, userId : userId}, data, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
@@ -51,11 +61,12 @@ router.put('/:id', function (req, res, next) {
     });
 });
 
-router.delete('/:id', function (req, res, next) {
+router.delete('/:userid/:blockid', function (req, res, next) {
     console.log('router.delete id');
-    var id = req.params.id;
-    console.log(id);
-    StoryBlockModel.findOneAndRemove({_id: id}, function (err, storyBlock) {
+    var userId = req.params.userid;
+    var blockId = req.params.blockid;
+
+    StoryBlockModel.findOneAndRemove({_id : blockId, userId : userId}, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }

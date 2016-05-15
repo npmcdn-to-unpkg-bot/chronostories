@@ -10,13 +10,15 @@ import {SignUpComponent} from "./signup-form.component";
             *ngIf="login" 
             (closeModal)="hideAccessForm()"
             (swapWindow)="login=!login"
+            (authStatus)="authStatusChanged($event)"
             (notify)="notifyMessage($event)"
             ></sign-in-form>
         <sign-up-form 
             *ngIf="!login" 
             (closeModal)="hideAccessForm()"
             (swapWindow)="login=!login"
-            (notify)="notifyMessage()"
+            (authStatus)="authStatusChanged($event)"
+            (notify)="notifyMessage($event)"
             ></sign-up-form>
     `,
     providers: [],
@@ -26,6 +28,7 @@ import {SignUpComponent} from "./signup-form.component";
 export class AuthFormComponent {
     @Output() closeModal:EventEmitter<any> = new EventEmitter();
     @Output() notify:EventEmitter<any> = new EventEmitter();
+    @Output() authStatus:EventEmitter<any> = new EventEmitter();
     
     public login=false;
 
@@ -35,5 +38,9 @@ export class AuthFormComponent {
     
     notifyMessage(event){
         this.notify.emit(event);
+    }
+
+    authStatusChanged(event){
+        this.authStatus.emit(event);
     }
 }

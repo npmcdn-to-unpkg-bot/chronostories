@@ -23,12 +23,12 @@ import {Configuration} from "../config/configuration";
         </div>
     `,
     providers: [UtilsService, StoryBlockService],
-    inputs: ['storyBlockInfo', 'index']
+    inputs: ['storyBlockInfo', 'index' , 'userId']
 })
 
 export class StoryBlockComponent implements OnInit {
     public storyBlockInfo:StoryBlock;
-
+    private userId;
     public index;
     public _exposed = false;
     public _active = true;
@@ -209,7 +209,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     remove(index, event) {
-        this.storyBlockService.deleteStoryBlock(this.storyBlockInfo).subscribe(
+        this.storyBlockService.deleteStoryBlock(this.userId,this.storyBlockInfo).subscribe(
             data => {
                 console.log(data);
             },
@@ -234,7 +234,7 @@ export class StoryBlockComponent implements OnInit {
     save(index, event) {
 
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
-            this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
+            this.storyBlockService.saveStoryBlock(this.userId,this.storyBlockInfo).subscribe(
                 data => {
                     this.storyBlockInfo = <StoryBlock>data;
                     console.log('Saving temporary data ', data, this.storyBlockInfo);

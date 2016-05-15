@@ -24,6 +24,7 @@ import {AuthFormComponent} from "./auth-form.component";
                     [index]="i" 
                     [storyBlockInfo]="storyBlock" 
                     [zoomLevel]="zoomLevel"
+                    [userId]="userId"
                     [exposedIndex]="exposedIndex"
                     [ngClass]="{exposed: exposedIndex == i}"
                     (removeStoryBlockEvent)="removeStoryBlock($event)" 
@@ -62,6 +63,7 @@ import {AuthFormComponent} from "./auth-form.component";
             *ngIf="accessFormVisible" 
             (closeModal)="hideAccessForm()"
             (notify)="notify($event)"
+            (authStatus)="authStatusChanged($event)"
             ></auth-form>
         <notification></notification>
     `,
@@ -74,7 +76,7 @@ export class AppComponent implements OnInit {
     public storyBlocks:StoryBlock[];
     public storyBlockTypes:StoryBlockType[];
     public storyBlockDefaultTypes:StoryBlockType[];
-
+    private userId;
     public zoomLevel;
     public exposedIndex;
     public exposedStoryBlock;
@@ -88,8 +90,9 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit():any {
+        this.userId = this.authUser();
         this.getStoryBlockTypes();
-        this.getStoryBlocks();
+        this.getStoryBlocks(this.userId);
         this.zoomLevel = 10;
         this.exposedIndex = -1;
         this.exposedStoryBlock = null;
@@ -99,10 +102,20 @@ export class AppComponent implements OnInit {
         };
         this.menuVisible = false;
         this.accessFormVisible = false;
-        // this.storyBlockService.generateTestData().subscribe(
-        //     err => console.error(err),
-        //     () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks')
-        // );
+        
+    }
+    
+    authUser(){
+        if (this.authService.isLoggedIn()) {
+            return this.authService.getIdFromToken();
+        } else {
+            var anonymousToken = this.webStorageService.get('anonymous_token');
+            if (!anonymousToken) {
+                var anonymousToken = this.authService.generateAnonymousToken();
+                this.webStorageService.put('anonymous_token', anonymousToken);
+            }
+            return this.authService.getIdFromAnonymousToken(anonymousToken);
+        }
     }
     
     setToken(value:string){
@@ -113,13 +126,22 @@ export class AppComponent implements OnInit {
         return this.webStorageService.get('token');
     }
 
+    authStatusChanged(){
+        this.refreshBlockList();
+    }
+
+    refreshBlockList(){
+        this.userId = this.authUser();
+        this.getStoryBlocks(this.userId);
+    }
+
     getStoryBlockTypes() {
         this.storyBlockTypes = this.storyBlockService.getStoryBlockTypes();
         this.storyBlockDefaultTypes = this.storyBlockService.getStoryBlockDefaultTypes();
     }
 
-    getStoryBlocks() {
-        this.storyBlockService.getStoryBlocks().subscribe(
+    getStoryBlocks(id) {
+        this.storyBlockService.getStoryBlocks(id).subscribe(
             data => {
                 this.storyBlocks = data;
                 this.maxIndex = 0;
@@ -179,6 +201,7 @@ export class AppComponent implements OnInit {
 
     logOut(){
         this.authService.logout();
+        this.refreshBlockList();
     }
 
     isLoggedIn(){
@@ -262,7 +285,7 @@ export class AppComponent implements OnInit {
 
     save() {
         for (var i = 0; i < this.storyBlocks.length; i++) {
-            this.storyBlockService.saveStoryBlock(this.storyBlocks[i]).subscribe();
+            this.storyBlockService.saveStoryBlock(this.userId, this.storyBlocks[i]).subscribe();
         }
     }
 

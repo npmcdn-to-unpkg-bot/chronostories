@@ -28,12 +28,12 @@ export class StoryBlockService {
         return this._exposedIndex;
     }
 
-    getStoryBlocks():Observable<StoryBlock[]> {
-        return this.http.get('/storyblocks/')
+    getStoryBlocks(userId):Observable<StoryBlock[]> {
+        return this.http.get('/storyblocks/'+userId)
             .map(res => res.json());
     }
 
-    saveStoryBlock(storyBlock:StoryBlock):Observable<StoryBlock> {
+    saveStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock> {
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });
@@ -43,18 +43,18 @@ export class StoryBlockService {
         });
 
         if (!!storyBlock._id) {
-            return this.http.put('/storyblocks/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
+            return this.http.put('/storyblocks/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json());
         }
         else {
-            return this.http.post('/storyblocks/', "data=" + JSON.stringify(storyBlock), options)
+            return this.http.post('/storyblocks/'+userId +'/' , "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json());
         }
     }
 
-    deleteStoryBlock(storyBlock:StoryBlock):Observable<StoryBlock[]> {
+    deleteStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock[]> {
         if (!!storyBlock._id) {
-            return this.http.delete('/storyblocks/' + storyBlock._id)
+            return this.http.delete('/storyblocks/' + userId + '/' + storyBlock._id)
                 .map(res => res.json());
         }
         return null;

@@ -76,6 +76,7 @@ export class SignUpComponent {
     @Output() closeModal:EventEmitter<any> = new EventEmitter();
     @Output() swapWindow:EventEmitter<any> = new EventEmitter();
     @Output() notify:EventEmitter<any> = new EventEmitter();
+    @Output() authStatus:EventEmitter<any> = new EventEmitter();
 
     constructor(private authService:AuthService, private builder:FormBuilder, private webStorageService:WebStorageService, private configuration:Configuration) {
         this.user = new User();
@@ -113,6 +114,7 @@ export class SignUpComponent {
                 },
                 () => {
                     console.log('registered');
+                    this.authStatus.emit('Login');
                     this.close('');
                 });
         }
