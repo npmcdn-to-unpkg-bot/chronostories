@@ -42,7 +42,6 @@ export class SidebarComponent implements OnInit {
     }
     selectIndex(index: number) {
         this._index = index;
-        console.log(this._index);
     }
     ngOnDestroy() {
         this._subscription.unsubscribe();

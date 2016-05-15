@@ -81,10 +81,10 @@
 }
 
 // TRANSITIONS AND TRANSOFMS
-@mixin transition($props, $duration:.4s) {
+@mixin transition($props, $duration:.4s, $timing-function: ease) {
   $transition: unquote('');
   @each $prop in $props {
-    $transition: $transition unquote('#{$prop} #{$duration}');
+    $transition: $transition unquote('#{$prop} #{$duration} #{$timing-function}');
     // Add comma if not dealing with the last item of list
     @if $prop != nth($props, length($props)) {
       $transition: $transition unquote(',');

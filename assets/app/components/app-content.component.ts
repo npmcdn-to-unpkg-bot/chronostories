@@ -1,10 +1,11 @@
-import {Component, OnInit, Output, EventEmitter} from 'angular2/core';
+import {Component, OnInit, ViewChild} from 'angular2/core';
 import {NgClass} from 'angular2/common';
 import {StoryBlockService} from "../services/storyblocks.service";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockComponent} from "./storyblock.component";
 import {TimelineComponent} from "./timeline.component";
 import {AddButtonComponent} from "./add-button.component";
+import {NotificationComponent} from "./notification.component";
 import {SidebarComponent} from "./sidebar.component";
 import {AuthFormComponent} from "./auth-form.component";
 import {Configuration} from "../config/configuration";
@@ -23,8 +24,9 @@ import {StoryBlockType} from "../models/storyblock-type";
                     [zoomLevel]="zoomLevel"
                     [exposedIndex]="exposedIndex"
                     [ngClass]="{exposed: exposedIndex == i}"
-                    (removeStoryBlockEvent)="removeStoryBlock($event)" 
+                    (removeStoryBlockEvent)="removeStoryBlock($event)"  
                     (exposeEvent)="setExposed($event)"
+                    (notify)="notify($event)"
                     class="story-block {{ storyBlock.type }}"></storyblock>
             </div>
             <div class="timeline"
@@ -49,12 +51,14 @@ import {StoryBlockType} from "../models/storyblock-type";
             <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
         <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
+        <notification></notification>
     `,
     providers: [StoryBlockService, Configuration],
-    directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, SidebarComponent, AuthFormComponent, NgClass]
+    directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, SidebarComponent, NotificationComponent, AuthFormComponent, NgClass]
 })
 
 export class AppComponent implements OnInit {
+    @ViewChild(NotificationComponent) notificationComponent:NotificationComponent;
     public storyBlocks:StoryBlock[];
     public storyBlockTypes:StoryBlockType[];
     public storyBlockDefaultTypes:StoryBlockType[];
@@ -63,7 +67,6 @@ export class AppComponent implements OnInit {
     public exposedIndex;
     public exposedStoryBlock;
     public addButton;
-    public selectedBlock:StoryBlock;
     public token:string = '';
     public accessFormVisible;
     private maxIndex = 0;
@@ -229,6 +232,11 @@ export class AppComponent implements OnInit {
         for (var i = 0; i < this.storyBlocks.length; i++) {
             this.storyBlockService.saveStoryBlock(this.storyBlocks[i]).subscribe();
         }
+    }
+
+    notify(notification){
+        this.notificationComponent.show(notification);
+
     }
 
     downloadPdf(){

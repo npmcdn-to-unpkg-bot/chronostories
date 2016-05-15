@@ -18,7 +18,7 @@ import {Configuration} from "../config/configuration";
             </div>
             <div class="exposed-actions">
                 <a (click)="save(index, $event)" class="button inline-button primary">Save</a>
-                <a (click)="cancel()" class="button inline-button secondary">Cancel</a>
+                <a (click)="close()" class="button inline-button secondary">Close</a>
             </div>
         </div>
     `,
@@ -41,6 +41,7 @@ export class StoryBlockComponent implements OnInit {
     @Output() zoomEvent:EventEmitter<any> = new EventEmitter();
     @Output() exposeEvent:EventEmitter<any> = new EventEmitter();
     @Output() removeStoryBlockEvent:EventEmitter<any> = new EventEmitter();
+    @Output() notify:EventEmitter<any> = new EventEmitter();
 
     constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService:StoryBlockService, private configuration:Configuration) {
     }
@@ -74,7 +75,6 @@ export class StoryBlockComponent implements OnInit {
 
     zoomChanged() {
         // console.log('[StoryBlock #' + this.index + '] Zoom changed from ' + this._previousZoomLevel + ' to ' + this._zoomLevel);
-
         if (this._zoomLevel < this.storyBlockInfo.importance) {
             this.fadeOut(1000);
             this._active = false;
@@ -88,7 +88,7 @@ export class StoryBlockComponent implements OnInit {
     fadeIn(speed:number) {
         // console.log('[StoryBlock #' + this.index + '] Fading in...');
         let animation = this._ab.css();
-
+        var _self = this;
         var fromStyle = {};
         var toStyle = {};
 
@@ -96,23 +96,17 @@ export class StoryBlockComponent implements OnInit {
         fromStyle['transition-timing-function'] = 'cubic-bezier(0.575, 0.255, 0.440, 0.985);';
         toStyle['opacity'] = 1;
 
-
         animation
-            .setDuration(speed);
-        animation
+            .setDuration(speed)
             .setFromStyles(fromStyle)
             .setToStyles(toStyle);
 
-
-        if (!!this._actionTimeout) {
-            clearTimeout(this._actionTimeout);
+        if (!!_self._actionTimeout) {
+            clearTimeout(_self._actionTimeout);
         }
 
-        var _self = this;
-
-        this._actionTimeout = setTimeout(function () {
-            animation
-                .start(_self._e.nativeElement);
+        _self._actionTimeout = setTimeout(function () {
+            animation.start(_self._e.nativeElement);
         }, 100);
     }
 
@@ -120,38 +114,32 @@ export class StoryBlockComponent implements OnInit {
         if (this._active) {
             // console.log('[StoryBlock #' + this.index + '] Fading out...[' + this._zoomLevel + '<' + this.storyBlockInfo.importance + ']');
             let animation = this._ab.css();
-
+            var _self = this;
             var fromStyle = {};
             var toStyle = {};
-
 
             toStyle['transition-timing-function'] = 'cubic-bezier(0.575, 0.255, 0.440, 0.985);';
             toStyle['opacity'] = 0;
 
-
             animation
-                .setDuration(speed);
-            animation
+                .setDuration(speed)
                 .setFromStyles(fromStyle)
                 .setToStyles(toStyle);
 
-
-            if (!!this._actionTimeout) {
-                console.log('[StoryBlock #' + this.index + '] Animation removed');
-                clearTimeout(this._actionTimeout);
+            if (!!_self._actionTimeout) {
+                console.log('[StoryBlock #' + _self.index + '] Animation removed');
+                clearTimeout(_self._actionTimeout);
             }
 
-            var _self = this;
-
-            this._actionTimeout = setTimeout(function () {
-                animation
-                    .start(_self._e.nativeElement);
+            _self._actionTimeout = setTimeout(function () {
+                animation.start(_self._e.nativeElement);
             }, 100);
         }
     }
 
     changePositionOnZoom(speed) {
         let animation = this._ab.css();
+        var _self = this;
         var fromStyle = {
             top: this.configuration.zoom.offset + ((this.configuration.zoom.step + (this._previousZoomLevel * this.configuration.zoom.strength)) * this.storyBlockInfo.timePosition) + 'px'
         };
@@ -162,7 +150,7 @@ export class StoryBlockComponent implements OnInit {
 
         // console.log('[StoryBlock #' + this.index + '] Changing position from ' + (fromStyle.top) + ' to ' + (toStyle.top) + ' ...');
 
-        if (this._zoomLevel > this.storyBlockInfo.importance) {
+        if (_self._zoomLevel > _self.storyBlockInfo.importance) {
             // console.log('[StoryBlock #' + this.index + '] ...and fading in [' + this._zoomLevel + '>' + this.storyBlockInfo.importance + ']');
             toStyle['opacity'] = 1;
         }
@@ -173,24 +161,18 @@ export class StoryBlockComponent implements OnInit {
 
         toStyle['transition-timing-function'] = 'cubic-bezier(0.575, 0.255, 0.440, 0.985);';
 
-
         animation
-            .setDuration(speed);
-        animation
+            .setDuration(speed)
             .setFromStyles(fromStyle)
             .setToStyles(toStyle);
 
-
-        if (!!this._actionTimeout) {
+        if (!!_self._actionTimeout) {
             // console.log('[StoryBlock #' + this.index + '] Animation removed');
-            clearTimeout(this._actionTimeout);
+            clearTimeout(_self._actionTimeout);
         }
 
-        var _self = this;
-
-        this._actionTimeout = setTimeout(function () {
-            animation
-                .start(_self._e.nativeElement);
+        _self._actionTimeout = setTimeout(function () {
+            animation.start(_self._e.nativeElement);
         }, 100);
     }
 
@@ -227,7 +209,6 @@ export class StoryBlockComponent implements OnInit {
     }
 
     remove(index, event) {
-        console.log('Should remove', index, event);
         this.storyBlockService.deleteStoryBlock(this.storyBlockInfo).subscribe(
             data => {
                 console.log(data)
@@ -248,11 +229,16 @@ export class StoryBlockComponent implements OnInit {
             },
             () => {
                 console.log('Saved ', this.storyBlockInfo);
+                this.notify.emit('Saved successfully');
+            },
+            () => {
+                console.log('Error while saving ', this.storyBlockInfo);
+                this.notify.emit('Error. Please try again.');
             }
         );
     }
 
-    cancel() {
+    close() {
         this.exposeEvent.emit(-1);
         if (!!this.storyBlockLocalSave) {
             this.storyBlockInfo = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockLocalSave));

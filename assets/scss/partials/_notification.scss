@@ -1,0 +1,30 @@
+notification {
+  position: fixed;
+  opacity: 0;
+  bottom: -999px;
+  color: $white;
+  left: 50%;
+  margin: 8px;
+  padding: $gutter/2 $gutter;
+  text-align: center;
+  font-size: 12px;
+  background: rgba($tundora, .9);
+  z-index: 999;
+  @extend .material-shadow;
+  @include rounded(2px);
+  @include translateX(-50%);
+  @include transition(bottom opacity, .4s, cubic-bezier(.25,.8,.25,1));
+
+  &.error {
+    background: rgba($punch, .75);
+  }
+
+  &.success {
+    background: rgba($apple, .75);
+  }
+
+  &.visible {
+    bottom: $gutter/2;
+    opacity: 1;
+  }
+}
