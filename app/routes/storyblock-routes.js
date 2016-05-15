@@ -15,6 +15,17 @@ router.get('/', function (req, res) {
         })
 });
 
+router.get('/:id', function (req, res, next) {
+    console.log('router.get id');
+    var id = req.params.id;
+    StoryBlockModel.findById(id, function (err, storyBlock) {
+        if (err) {
+            console.log(err);
+        }
+        return res.json(storyBlock);
+    });
+});
+
 router.post('/', function (req, res, next) {
     console.log('router.post');
     var data = JSON.parse(req.body.data);
@@ -27,17 +38,6 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.get('/:id', function (req, res, next) {
-    console.log('router.get id');
-    var id = req.params.id;
-    StoryBlockModel.findById(id, function (err, storyBlock) {
-        if (err) {
-            console.log(err);
-        }
-        return res.json(storyBlock);
-    });
-});
-
 router.put('/:id', function (req, res, next) {
     console.log('router.put id');
     var id = req.params.id;
@@ -47,7 +47,7 @@ router.put('/:id', function (req, res, next) {
             console.log(err);
         }
         console.log('Saving');
-        return res.json({});
+        return res.json(storyBlock);
     });
 });
 

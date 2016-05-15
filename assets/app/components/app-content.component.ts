@@ -52,10 +52,10 @@ import {AuthFormComponent} from "./auth-form.component";
             (addDragged)="addStoryBlock($event)"
             [storyBlock]="exposedStoryBlock"></sidebar>
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
-            <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
+            <a class="user-aside" [hidden]="authService.isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
+            <a class="user-aside" [hidden]="!authService.isLoggedIn()" (click)="authService.logOut()">Logout</a>
         </aside>
-        <auth-form *ngIf="accessFormVisible && !authService.isLoggedIn()" (closeModal)="hideAccessForm()"></auth-form>
-        <div *ngIf="authService.isLoggedIn()" (click)="authService.logOut()">Logout</div>
+        <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
         <notification></notification>
     `,
     providers: [StoryBlockService, Configuration, AuthService, WebStorageService],
