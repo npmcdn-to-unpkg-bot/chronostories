@@ -14,7 +14,7 @@ export const STORYBLOCKS:StoryBlock[] = <StoryBlock[]>[
         blockId: 2,
         title: 'Introduction',
         description: 'Where your characters became real',
-        timePosition: 10,
+        timePosition: 3,
         importance: 1,
         blockNumber:1,
         type:'chapter'
@@ -23,7 +23,7 @@ export const STORYBLOCKS:StoryBlock[] = <StoryBlock[]>[
         blockId: 3,
         title: 'Evolution',
         description: 'Things gets trickier',
-        timePosition: 10,
+        timePosition: 5,
         importance: 2,
         blockNumber:2,
         type:'chapter'
@@ -32,7 +32,7 @@ export const STORYBLOCKS:StoryBlock[] = <StoryBlock[]>[
         blockId: 4,
         title: 'Topic moment',
         description: 'Woah!',
-        timePosition: 10,
+        timePosition: 7,
         importance: 1,
         blockNumber:3,
         type:'chapter'
