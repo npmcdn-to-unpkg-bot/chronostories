@@ -9,8 +9,7 @@ var UserSchema = new mongoose.Schema({
         required: true
     },
     name: {
-        type: String,
-        required: true
+        type: String
     },
     hash: String,
     salt: String
@@ -18,11 +17,11 @@ var UserSchema = new mongoose.Schema({
 
 UserSchema.methods.setPassword = function(password){
     this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+    this.hash = crypto.pbkdf2Sync(new Buffer(password), this.salt, 1000, 64).toString('hex');
 };
 
 UserSchema.methods.validPassword = function(password) {
-    var hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+    var hash = crypto.pbkdf2Sync(new Buffer(password), this.salt, 1000, 64).toString('hex');
     return this.hash === hash;
 };
 
@@ -35,7 +34,7 @@ UserSchema.methods.generateJwt = function() {
         email: this.email,
         name: this.name,
         exp: parseInt(expiry.getTime() / 1000),
-    }, "MY_SECRET"); // DO NOT KEEP YOUR SECRET IN THE CODE!
+    }, "A_ATTACK");
 };
 
 module.exports = mongoose.model('User', UserSchema);

@@ -11,7 +11,7 @@ router.get('/', function (req, res) {
             sort : 'timePosition'
         },
         function (err, storyBlock) {
-            res.send(storyBlock);
+            res.json(storyBlock);
         })
 });
 
@@ -47,7 +47,7 @@ router.put('/:id', function (req, res, next) {
             console.log(err);
         }
         console.log('Saving');
-        return res.send('');
+        return res.send('{}');
     });
 });
 
@@ -60,7 +60,7 @@ router.delete('/:id', function (req, res, next) {
             console.log(err);
         }
         console.log('Found');
-        return res.send('');
+        return res.send('{}');
     }).exec(function (err) {
         console.log('Deleting...');
     });

@@ -7,9 +7,11 @@ import {TimelineComponent} from "./timeline.component";
 import {AddButtonComponent} from "./add-button.component";
 import {NotificationComponent} from "./notification.component";
 import {SidebarComponent} from "./sidebar.component";
-import {AuthFormComponent} from "./auth-form.component";
 import {Configuration} from "../config/configuration";
 import {StoryBlockType} from "../models/storyblock-type";
+import {AuthService} from "../services/auth.service";
+import {WebStorageService} from "../services/webstorage.service";
+import {AuthFormComponent} from "./auth-form.component";
 
 
 @Component({
@@ -24,7 +26,7 @@ import {StoryBlockType} from "../models/storyblock-type";
                     [zoomLevel]="zoomLevel"
                     [exposedIndex]="exposedIndex"
                     [ngClass]="{exposed: exposedIndex == i}"
-                    (removeStoryBlockEvent)="removeStoryBlock($event)"  
+                    (removeStoryBlockEvent)="removeStoryBlock($event)" 
                     (exposeEvent)="setExposed($event)"
                     (notify)="notify($event)"
                     class="story-block {{ storyBlock.type }}"></storyblock>
@@ -52,11 +54,12 @@ import {StoryBlockType} from "../models/storyblock-type";
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
             <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
-        <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
+        <auth-form *ngIf="accessFormVisible && !authService.isLoggedIn()" (closeModal)="hideAccessForm()"></auth-form>
+        <div *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></div>
         <notification></notification>
     `,
-    providers: [StoryBlockService, Configuration],
-    directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, SidebarComponent, NotificationComponent, AuthFormComponent, NgClass]
+    providers: [StoryBlockService, Configuration, AuthService, WebStorageService],
+    directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, NotificationComponent, SidebarComponent, AuthFormComponent, NgClass]
 })
 
 export class AppComponent implements OnInit {
@@ -73,7 +76,7 @@ export class AppComponent implements OnInit {
     public accessFormVisible;
     private maxIndex = 0;
 
-    constructor(private storyBlockService:StoryBlockService, private configuration:Configuration) {
+    constructor(private storyBlockService:StoryBlockService, private configuration:Configuration, private webStorageService:WebStorageService, private authService:AuthService) {
     }
 
     ngOnInit():any {
@@ -91,6 +94,14 @@ export class AppComponent implements OnInit {
         //     err => console.error(err),
         //     () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks')
         // );
+    }
+    
+    setToken(value:string){
+        this.webStorageService.put('token',value);
+    }    
+    
+    getToken(){
+        return this.webStorageService.get('token');
     }
 
     getStoryBlockTypes() {

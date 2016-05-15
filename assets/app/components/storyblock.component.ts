@@ -22,7 +22,7 @@ import {Configuration} from "../config/configuration";
             </div>
         </div>
     `,
-    providers: [UtilsService, StoryBlockService, Configuration],
+    providers: [UtilsService, StoryBlockService],
     inputs: ['storyBlockInfo', 'index']
 })
 

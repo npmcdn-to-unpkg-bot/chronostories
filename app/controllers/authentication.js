@@ -5,19 +5,20 @@ var User = mongoose.model('User');
 
 module.exports.register = function(req, res) {
     var user = new User();
-
     user.name = req.body.name;
     user.email = req.body.email;
 
     user.setPassword(req.body.password);
 
-    user.save(function(err) {
+    User.create(user,function(err, user) {
+        if (err) {
+            console.log(err);
+            return send('');
+        }
         var token;
         token = user.generateJwt();
         res.status(200);
-        res.json({
-            "token" : token
-        });
+        return res.send(token);
     });
 };
 
@@ -36,9 +37,7 @@ module.exports.login = function(req, res) {
         if(user){
             token = user.generateJwt();
             res.status(200);
-            res.json({
-                "token" : token
-            });
+            return res.send(token);
         } else {
             // If user is not found
             res.status(401).json(info);
