@@ -75,6 +75,7 @@ export class SignUpComponent {
 
     @Output() closeModal:EventEmitter<any> = new EventEmitter();
     @Output() swapWindow:EventEmitter<any> = new EventEmitter();
+    @Output() notify:EventEmitter<any> = new EventEmitter();
 
     constructor(private authService:AuthService, private builder:FormBuilder, private webStorageService:WebStorageService, private configuration:Configuration) {
         this.user = new User();
@@ -103,7 +104,13 @@ export class SignUpComponent {
                 data => {
                     this.webStorageService.put(this.configuration.token.name, data);
                 },
-                err => console.error(err),
+                err => {
+                    console.error(err);
+                    this.notify.emit({
+                        type: 'error',
+                        message: 'The email is already taken'
+                    });
+                },
                 () => {
                     console.log('registered');
                     this.close('');

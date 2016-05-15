@@ -55,7 +55,11 @@ import {AuthFormComponent} from "./auth-form.component";
             <a class="user-aside" *ngIf="!isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
             <a class="user-aside" *ngIf="isLoggedIn()" (click)="logOut()">Logout</a>
         </aside>
-        <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
+        <auth-form 
+            *ngIf="accessFormVisible" 
+            (closeModal)="hideAccessForm()"
+            (notify)="notify($event)"
+            ></auth-form>
         <notification></notification>
     `,
     providers: [StoryBlockService, Configuration, AuthService, WebStorageService],
@@ -257,7 +261,16 @@ export class AppComponent implements OnInit {
     }
 
     notify(notification){
-        this.notificationComponent.show(notification);
+        if((notification || {}).type == 'error'){
+            this.notificationComponent.error(notification.message || '');
+        }
+        else if((notification || {}).type == 'success'){
+            this.notificationComponent.success(notification.message || '');
+        }
+        else{
+            this.notificationComponent.message(notification.message || '');
+        }
+
     }
 
     downloadPdf(){

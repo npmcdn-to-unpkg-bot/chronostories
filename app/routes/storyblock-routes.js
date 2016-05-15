@@ -42,7 +42,7 @@ router.put('/:id', function (req, res, next) {
     console.log('router.put id');
     var id = req.params.id;
     var data = JSON.parse(req.body.data);
-    StoryBlockModel.findOneAndUpdate({_id: id}, data, function (err) {
+    StoryBlockModel.findOneAndUpdate({_id: id}, data, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }

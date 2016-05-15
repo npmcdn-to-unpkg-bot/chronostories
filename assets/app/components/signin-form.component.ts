@@ -53,6 +53,7 @@ export class SignInComponent {
 
     @Output() closeModal:EventEmitter<any> = new EventEmitter();
     @Output() swapWindow:EventEmitter<any> = new EventEmitter();
+    @Output() notify:EventEmitter<any> = new EventEmitter();
 
     constructor(private authService:AuthService, private builder:FormBuilder, private webStorageService:WebStorageService, private configuration:Configuration) {
         this.user = new User();
@@ -63,23 +64,29 @@ export class SignInComponent {
         })
     }
 
-    close(event){
+    close(event) {
         this.closeModal.emit(event);
     }
-    
-    swapToSignUp(){
+
+    swapToSignUp() {
         this.swapWindow.emit(event);
     }
 
     onSignIn(event) {
         this.submitted = true;
         console.log(JSON.stringify(this.form.value));
-        if(this.form.valid) {
+        if (this.form.valid) {
             this.authService.login(this.user).subscribe(
                 data => {
                     this.webStorageService.put(this.configuration.token.name, data);
                 },
-                err => console.error(err),
+                err => {
+                    console.error(err);
+                    this.notify.emit({
+                        type: 'error',
+                        message: 'Invalid email or password'
+                    });
+                },
                 () => {
                     console.log('logged in');
                     this.close('');
