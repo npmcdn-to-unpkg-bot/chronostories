@@ -121,6 +121,7 @@ export class AppComponent implements OnInit {
 
     removeStoryBlock(index) {
         this.storyBlocks.splice(index, 1);
+        this.recalculateStoryBlockNumbers();
     }
 
     showAccessForm() {
