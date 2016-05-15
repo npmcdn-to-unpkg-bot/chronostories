@@ -58,7 +58,7 @@ aside {
       }
 
       .create-storyblock {
-        display: block;
+        display: none;
         position: relative;
         text-align: center;
         font-size: 14px;
@@ -69,6 +69,10 @@ aside {
         cursor: -moz-grab;
         cursor: -webkit-grab;
         //@include transition(border-color);
+        
+        @media #{$tablet-up} {
+          display: block;
+        }
 
         &:active {
           cursor: grabbing;

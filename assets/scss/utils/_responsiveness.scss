@@ -1,2 +1,2 @@
 $screen: "only screen";
-$tablet-up: "#{$screen} and (min-width: 768px)";
+$tablet-up: "#{$screen} and (min-width: #{em-calc(768)})";
