@@ -5,7 +5,7 @@ export class Configuration {
     public zoom = {
         offset: 0,
         step: 150,
-        strength: 10
+        strength: 0.6
     };
 
     public token = {

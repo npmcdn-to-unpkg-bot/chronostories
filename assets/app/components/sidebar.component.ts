@@ -19,6 +19,7 @@ import {StoryBlockType} from "../models/storyblock-type";
             <div class="sidebar-action">
                 <h3><span class="capital-letter">Chapter</span> {{_storyBlock.blockNumber+1}}</h3>
             </div>
+            <div class="sidebar-separator"></div>
             <div class="sidebar-action">
                 <div class="form-group">
                     <label>Storyblock type</label>
@@ -29,13 +30,14 @@ import {StoryBlockType} from "../models/storyblock-type";
                     </div>
                 </div>
             </div>
+            <div class="sidebar-separator"></div>
             <div class="sidebar-count">
                 <span class="label">Total characters</span><span class="count">{{_storyBlock.description.length}}</span>
             </div>
-            <div class="sidebar-info">
+            <div class="sidebar-info" *ngIf="!!_storyBlock.createdAt">
                 <span class="label">Created</span><span class="info">{{utilsService.getHumanDate(_storyBlock.createdAt)}}</span>
             </div>
-            <div class="sidebar-info">
+            <div class="sidebar-info" *ngIf="!!_storyBlock.lastModifiedAt">
                 <span class="label">Last modified</span><span class="info">{{utilsService.getHumanDate(_storyBlock.lastModifiedAt)}}</span>
             </div>
         </div>

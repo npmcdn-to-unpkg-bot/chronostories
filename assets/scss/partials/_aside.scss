@@ -111,6 +111,12 @@ aside {
       }
     }
 
+    .sidebar-separator {
+      padding-top: $gutter;
+      margin-top: $gutter;
+      border-top: 1px rgba($white, .2) solid;
+    }
+
     .sidebar-info {
       @include clearfix();
       .label {
@@ -127,6 +133,7 @@ aside {
 
     .sidebar-count {
       @include clearfix();
+
       .label {
         float: left;
         font-size: 13px;
