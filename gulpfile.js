@@ -14,6 +14,11 @@ var imagemin = require('gulp-imagemin');
 
 var tsProject = typescript.createProject('tsconfig.json');
 
+var vendorJSFiles = [
+    'bower_components/pdfmake/build/pdfmake.min.js',
+    'bower_components/pdfmake/build/vfs_fonts.js'
+];
+
 gulp.task('build-css', function () {
     return gulp.src([assetsDev + 'scss/*.scss', assetsDev + 'scss/**/*.scss'])
         .pipe(sass({
@@ -33,6 +38,13 @@ gulp.task('build-ts', function () {
         .pipe(gulp.dest(assetsProd + 'js/app/'));
 });
 
+gulp.task('build-vendor-js', function () {
+    return gulp.src(vendorJSFiles)
+        .pipe(sourcemaps.init())
+        .pipe(sourcemaps.write())
+        .pipe(concat('vendors.min.js'))
+        .pipe(gulp.dest(assetsProd + 'js/vendors/'));
+});
 
 gulp.task('build-img', function () {
     return gulp.src(assetsDev + 'img/**/*')
@@ -48,4 +60,4 @@ gulp.task('watch', function () {
     gulp.watch(assetsDev + 'img/*', ['build-img']);
 });
 
-gulp.task('default', ['watch', 'build-ts', 'build-css', 'build-img']);
+gulp.task('default', ['watch', 'build-ts','build-vendor-js', 'build-css', 'build-img']);

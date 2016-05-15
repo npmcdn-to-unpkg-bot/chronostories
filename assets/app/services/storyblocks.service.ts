@@ -6,6 +6,7 @@ import {Observable} from "rxjs/Observable";
 import {STORYBLOCKS} from "../mock/mock-storyblocks";
 import {StoryBlockType} from "../models/storyblock-type";
 import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
+declare var pdfMake: any;
 
 @Injectable()
 export class StoryBlockService {
@@ -45,11 +46,12 @@ export class StoryBlockService {
         }
         return null;
     }
-    
-    getStoryBlockTypes():StoryBlockType[]{
+
+    getStoryBlockTypes():StoryBlockType[] {
         return STORYBLOCK_TYPES;
-    }    
-    getStoryBlockDefaultTypes():StoryBlockType[]{
+    }
+
+    getStoryBlockDefaultTypes():StoryBlockType[] {
         return STORYBLOCK_TYPES;
     }
 
@@ -64,4 +66,48 @@ export class StoryBlockService {
         });
         this.http.post('/storyblocks/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
     }
+
+    downloadPdf(storyBlocks:StoryBlock[]) {
+        function compare(a:StoryBlock, b:StoryBlock) {
+            if (a.timePosition < b.timePosition)
+                return -1;
+            else if (a.timePosition > b.timePosition)
+                return 1;
+            else
+                return 0;
+        }
+
+        storyBlocks.sort(compare);
+
+
+        var docDefinition = {
+            content: [],
+
+            styles: {
+                chapter: {
+                    fontSize: 22,
+                    bold: true
+                },
+                paragraph: {
+                    fontSize: 18,
+                    bold: true
+                }
+            }
+        };
+
+        for (var i = 0; i < storyBlocks.length; i++) {
+            docDefinition.content.push(
+                {
+                    text: storyBlocks[i].title,
+                    style: storyBlocks[i].type
+                }
+            );
+            docDefinition.content.push(
+                storyBlocks[i].description
+            );
+        }
+
+        pdfMake.createPdf(docDefinition).download();
+    }
+
 }

@@ -7,11 +7,9 @@ import {TimelineComponent} from "./timeline.component";
 import {AddButtonComponent} from "./add-button.component";
 import {SidebarComponent} from "./sidebar.component";
 import {AuthFormComponent} from "./auth-form.component";
-import {User} from "../models/user";
 import {Configuration} from "../config/configuration";
 import {StoryBlockType} from "../models/storyblock-type";
-import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
-// import {LocalStorage} from "angular2-localstorage/LocalStorage";
+
 
 @Component({
     selector: 'app-content',
@@ -49,6 +47,7 @@ import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
         </main>
         <aside>
             <sidebar></sidebar>
+            <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
             <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
         <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
@@ -248,5 +247,9 @@ export class AppComponent implements OnInit {
         for (var i = 0; i < this.storyBlocks.length; i++) {
             this.storyBlockService.saveStoryBlock(this.storyBlocks[i]).subscribe();
         }
+    }
+
+    downloadPdf(){
+        this.storyBlockService.downloadPdf(this.storyBlocks);
     }
 }
