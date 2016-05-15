@@ -5,7 +5,7 @@ export const STORYBLOCKS:StoryBlock[] = <StoryBlock[]>[
         blockId: 1,
         title: 'Preface',
         description: 'You need to start somewhere',
-        timePosition:0,
+        timePosition:1,
         importance: -1,
         blockNumber:0,
         type:'chapter'
