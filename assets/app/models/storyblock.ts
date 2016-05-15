@@ -6,5 +6,6 @@ export interface StoryBlock {
     timePosition:number,
     importance:number,
     blockNumber:number,
-    type:string
+    type:string,
+    userId:string
 }

@@ -69,7 +69,7 @@ export class StoryBlockService {
         return STORYBLOCK_TYPES;
     }
 
-    generateTestData(userId):StoryBlock[] {
+    generateTestData(userId):Observable<StoryBlock[]> {
         console.log('Creating temporary data');
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -78,9 +78,14 @@ export class StoryBlockService {
         let options = new RequestOptions({
             headers: headers
         });
-        this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
+
+        var blocks:StoryBlock[] = STORYBLOCKS;
+
+        for(var i=0; i<blocks.length; i++){
+            blocks[i].userId = userId;
+        }
         
-        return STORYBLOCKS;
+        return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(blocks), options).map(res => res.json());
     }
 
     downloadPdf(storyBlocks:StoryBlock[]) {

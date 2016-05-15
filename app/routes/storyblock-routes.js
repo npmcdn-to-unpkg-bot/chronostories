@@ -35,8 +35,6 @@ router.post('/:userid', function (req, res, next) {
 
     //TODO:add check of the existence of the user
 
-    data.userId = userId;
-
     StoryBlockModel.create(data, function (err, storyBlock) {
         if (err) {
             console.log(err);
