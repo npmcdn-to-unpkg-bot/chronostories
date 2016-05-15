@@ -94,7 +94,7 @@ export class AppComponent implements OnInit {
         this.userId = this.authUser();
         this.getStoryBlockTypes();
         this.getStoryBlocks(this.userId);
-        this.zoomLevel = 10;
+        this.zoomLevel = 4;
         this.exposedIndex = -1;
         this.exposedStoryBlock = null;
         this.addButton = {
@@ -155,8 +155,7 @@ export class AppComponent implements OnInit {
                         this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
                     }
                 }
-                if(!this.storyBlocks){
-
+                if(!this.storyBlocks || this.storyBlocks.length==0){
                     console.log('No blocks received!');
                     this.storyBlockService.generateTestData(this.userId).subscribe(
                         saveDefaultBlocks => {
@@ -230,11 +229,23 @@ export class AppComponent implements OnInit {
         if (this.zoomLevel < 10) {
             this.zoomLevel++;
         }
+        else{
+            this.notify({
+                type:'message',
+                message:'Max zoom reached'
+            });
+        }
     }
 
     zoomOut() {
         if (this.zoomLevel > 0) {
             this.zoomLevel--;
+        }
+        else{
+            this.notify({
+                type:'message',
+                message:'Minimum zoom reached'
+            });
         }
     }
 

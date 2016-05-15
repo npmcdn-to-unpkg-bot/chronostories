@@ -5,7 +5,7 @@ export class Configuration {
     public zoom = {
         offset: 0,
         step: 150,
-        strength: 10
+        strength: 0.6
     };
 
     public token = {
@@ -13,6 +13,6 @@ export class Configuration {
         expiration: (30 * 24 * 60 * 60 * 1000)
     };
 
-    public apiBasePath = 'https://aa2016-chronostories.herokuapp.com';
-    // public apiBasePath = ''
+    // public apiBasePath = 'https://aa2016-chronostories.herokuapp.com';
+    public apiBasePath = ''
 }
