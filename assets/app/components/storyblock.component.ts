@@ -4,16 +4,12 @@ import {AnimationBuilder} from "angular2/src/animate/animation_builder";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockService} from "../services/storyblocks.service";
 import {Configuration} from "../config/configuration";
-import {StoryBlockType} from "../models/storyblock-type";
 
 @Component({
     selector: 'storyblock',
     template: `
-        <div class="index" ><span>{{utilsService.getRomanNumeral(storyBlockInfo.blockNumber + 1)}}</span></div>
+        <div class="index"><span *ngIf="storyBlockInfo.type == 'chapter'">{{utilsService.getRomanNumeral(storyBlockInfo.blockNumber + 1)}}</span></div>
         <div class="text-container">
-            <select [hidden]="!_exposed" [(ngModel)]="storyBlockInfo.type">
-                <option *ngFor="#storyBlockType of storyBlockTypes" value= {{storyBlockType.id}}>{{storyBlockType.name}}</option>
-            </select>
             <input class="title" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.title" placeholder="Insert a title" />
             <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..."></textarea>
             <div class="default-actions">
@@ -32,7 +28,6 @@ import {StoryBlockType} from "../models/storyblock-type";
 
 export class StoryBlockComponent implements OnInit {
     public storyBlockInfo:StoryBlock;
-    public storyBlockTypes:StoryBlockType[];
 
     public index;
     public _exposed = false;
@@ -45,8 +40,6 @@ export class StoryBlockComponent implements OnInit {
 
     @Output() zoomEvent:EventEmitter<any> = new EventEmitter();
     @Output() exposeEvent:EventEmitter<any> = new EventEmitter();
-    @Output() enterHeaderEvent:EventEmitter<any> = new EventEmitter();
-    @Output() exitHeaderEvent:EventEmitter<any> = new EventEmitter();
     @Output() removeStoryBlockEvent:EventEmitter<any> = new EventEmitter();
 
     constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService:StoryBlockService, private configuration:Configuration) {
@@ -69,7 +62,6 @@ export class StoryBlockComponent implements OnInit {
     }
 
     ngOnInit():any {
-        this.storyBlockTypes = this.storyBlockService.getStoryBlockTypes();
         this.changePositionOnZoom(1000);
     }
 

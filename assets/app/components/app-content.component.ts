@@ -26,10 +26,8 @@ import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
                     [exposedIndex]="exposedIndex"
                     [ngClass]="{exposed: exposedIndex == i}"
                     (removeStoryBlockEvent)="removeStoryBlock($event)" 
-                    (exposeEvent)="setExposed($event)" 
-                    (enterHeaderEvent)="requestSelection($event)" 
-                    (exitHeaderEvent)="requestDeselection($event)" 
-                    class="story-block"></storyblock>
+                    (exposeEvent)="setExposed($event)"
+                    class="story-block {{ storyBlock.type }}"></storyblock>
             </div>
             <div class="timeline"
                 (click)="addStoryBlock($event)"
@@ -48,7 +46,7 @@ import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
             </div>
         </main>
         <aside>
-            <sidebar></sidebar>
+            <sidebar [storyBlock]="exposedStoryBlock"></sidebar>
             <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
         <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
@@ -62,16 +60,13 @@ export class AppComponent implements OnInit {
     public storyBlockTypes:StoryBlockType[];
     public storyBlockDefaultTypes:StoryBlockType[];
 
-    zoomLevel = 10;
-    public selectedIndex = 0;
-    public exposedIndex = -1;
-    public addButton = {
-        visible: false,
-        top: 0
-    };
+    public zoomLevel;
+    public exposedIndex;
+    public exposedStoryBlock;
+    public addButton;
     public selectedBlock:StoryBlock;
     public token:string = '';
-    public accessFormVisible = false;
+    public accessFormVisible;
     private maxIndex = 0;
 
     constructor(private storyBlockService:StoryBlockService, private configuration:Configuration) {
@@ -81,8 +76,8 @@ export class AppComponent implements OnInit {
         this.getStoryBlockTypes();
         this.getStoryBlocks();
         this.zoomLevel = 10;
-        this.selectedIndex = 0;
         this.exposedIndex = -1;
+        this.exposedStoryBlock = null;
         this.addButton = {
             visible: false,
             top: 0
@@ -103,7 +98,6 @@ export class AppComponent implements OnInit {
         this.storyBlockService.getStoryBlocks().subscribe(
             data => {
                 this.storyBlocks = data;
-                this.selectedBlock = this.storyBlocks[this.selectedIndex]
                 this.maxIndex = 0;
 
                 for (var i = 0; i < this.storyBlocks.length; i++) {
@@ -226,21 +220,9 @@ export class AppComponent implements OnInit {
     setExposed(index) {
         this.recalculateStoryBlockNumbers();
         this.exposedIndex = index;
+        this.exposedStoryBlock = index >= 0 ? this.storyBlocks[index] : null;
+        this.storyBlockService.changeExposedIndex(index);
         document.querySelector('body').classList.toggle('no-scroll');
-    }
-
-    requestSelection(block) {
-        if (this.selectedIndex != block.index) {
-            this.selectedIndex = block.index;
-            this.selectedBlock = this.storyBlocks[this.selectedIndex];
-        }
-    }
-
-    requestDeselection(block) {
-        if (block.index > 0) {
-            this.selectedIndex = block.index - 1;
-            this.selectedBlock = this.storyBlocks[this.selectedIndex];
-        }
     }
 
     save() {

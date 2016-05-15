@@ -3,15 +3,28 @@ import {Http, Headers, RequestOptions} from 'angular2/http';
 import {StoryBlock} from "../models/storyblock";
 import 'rxjs/Rx';
 import {Observable} from "rxjs/Observable";
+import 'rxjs/add/operator/share';
+import {Observer} from 'rxjs/Observer';
 import {STORYBLOCKS} from "../mock/mock-storyblocks";
 import {StoryBlockType} from "../models/storyblock-type";
 import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
 
 @Injectable()
 export class StoryBlockService {
-
+    private _exposedIndex = -1;
+    indexChange$: Observable<number>;
+    private _observer: Observer<number>;
     constructor(public http:Http) {
-
+        this.indexChange$ = new Observable(observer =>
+            this._observer = observer).share();
+        // share() allows multiple subscribers
+    }
+    changeExposedIndex(index) {
+        this._exposedIndex = index;
+        this._observer.next(index);
+    }
+    getExposedIndex() {
+        return this._exposedIndex;
     }
 
     getStoryBlocks():Observable<StoryBlock[]> {

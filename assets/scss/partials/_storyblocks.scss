@@ -5,29 +5,31 @@
   @include flexbox();
 
   &:not(.exposed) {
-    &::before, &::after {
-      content: '';
-      position: absolute;
-      @include rounded(50%);
-    }
+    &.chapter {
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        @include rounded(50%);
+      }
 
-    &::before {
-      width: $storyblock-circle-size - 4px;
-      height: $storyblock-circle-size - 4px;
-      left: $timeline-left-padding + 2px;
-      top: 5px + 2px;
-      border: 2px $white solid;
-      z-index: 2;
+      &::before {
+        width: $storyblock-circle-size - 4px;
+        height: $storyblock-circle-size - 4px;
+        left: $timeline-left-padding + 2px;
+        top: 5px + 2px;
+        border: 2px $white solid;
+        z-index: 2;
 
-    }
+      }
 
-    &::after {
-      width: $storyblock-circle-size;
-      height: $storyblock-circle-size;
-      left: $timeline-left-padding;
-      top: 5px;
-      border: 2px $cadet-blue solid;
-      z-index: 1;
+      &::after {
+        width: $storyblock-circle-size;
+        height: $storyblock-circle-size;
+        left: $timeline-left-padding;
+        top: 5px;
+        border: 2px $cadet-blue solid;
+        z-index: 1;
+      }
     }
 
     .text-container {
@@ -81,6 +83,39 @@
 
     span {
       font-size: 14px;
+    }
+  }
+
+  &.paragraph {
+    .index {
+      background: none;
+      position: relative;
+
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        @include rounded(50%);
+      }
+
+      &::before {
+        width: 16px;
+        height: 16px;
+        top: ($storyblock-circle-size - 16px)/2;
+        left: ($storyblock-circle-size - 16px)/2;
+        background: $cadet-blue;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        top: ($storyblock-circle-size - 12px)/2;
+        left: ($storyblock-circle-size - 12px)/2;
+        background: $ship-cove;
+        border: 2px $white solid;
+        @include rounded(50%);
+      }
     }
   }
 

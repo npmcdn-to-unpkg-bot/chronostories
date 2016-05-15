@@ -12,6 +12,56 @@ aside {
     position: relative;
     padding: $gutter $gutter (44px + $gutter*2) $gutter;
     @include flex(1);
+
+    .sidebar-action {
+      &:not(:last-of-type) {
+        margin-bottom: $gutter;
+      }
+
+      a {
+        cursor: pointer;
+      }
+
+      .create-storyblock {
+        display: block;
+        position: relative;
+        text-align: center;
+        border: 2px $white dashed;
+        padding: 8px $gutter/2;
+        cursor: move; /* fallback if grab cursor is unsupported */
+        cursor: grab;
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+        &:active {
+          cursor: grabbing;
+          cursor: -moz-grabbing;
+          cursor: -webkit-grabbing;
+        }
+        &:hover:after {
+          content: 'Drag me over the timeline';
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          color: $white;
+          padding: 6px;
+          font-size: 9px;
+          white-space: nowrap;
+          background: rgba($tundora, .75);
+          @extend .sans-serif;
+          @include rounded();
+          @include translateX(-50%);
+        }
+      }
+
+      .form-group {
+        label {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 13px;
+        }
+      }
+    }
+
     &::after {
       content: '';
       position: absolute;
