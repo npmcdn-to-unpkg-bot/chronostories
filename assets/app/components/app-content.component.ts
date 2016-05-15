@@ -65,7 +65,7 @@ import {AuthFormComponent} from "./auth-form.component";
             (notify)="notify($event)"
             (authStatus)="authStatusChanged($event)"
             ></auth-form>
-        <notification></notification>
+        <notification [ngClass]="{error: notification.type == 'error', success: notification.type == 'success'}"></notification>
     `,
     providers: [StoryBlockService, Configuration, AuthService, WebStorageService],
     directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, NotificationComponent, SidebarComponent, AuthFormComponent, NgClass]
@@ -85,6 +85,7 @@ export class AppComponent implements OnInit {
     public menuVisible;
     public accessFormVisible;
     private maxIndex = 0;
+    private notification;
 
     constructor(private storyBlockService:StoryBlockService, private configuration:Configuration, private webStorageService:WebStorageService, private authService:AuthService) {
     }
@@ -102,7 +103,10 @@ export class AppComponent implements OnInit {
         };
         this.menuVisible = false;
         this.accessFormVisible = false;
-        
+        this.notification = {
+            type: null,
+            message: '',
+        };
     }
     
     authUser(){
@@ -290,16 +294,11 @@ export class AppComponent implements OnInit {
     }
 
     notify(notification){
-        if((notification || {}).type == 'error'){
-            this.notificationComponent.error(notification.message || '');
-        }
-        else if((notification || {}).type == 'success'){
-            this.notificationComponent.success(notification.message || '');
-        }
-        else{
-            this.notificationComponent.message(notification.message || '');
-        }
-
+        this.notification = {
+            type: notification.type || null,
+            message: notification.message || '',
+        };
+        this.notificationComponent.show(notification.message);
     }
 
     downloadPdf(){

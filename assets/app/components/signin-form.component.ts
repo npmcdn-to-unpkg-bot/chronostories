@@ -75,7 +75,6 @@ export class SignInComponent {
 
     onSignIn(event) {
         this.submitted = true;
-        console.log(JSON.stringify(this.form.value));
         if (this.form.valid) {
             this.authService.login(this.user).subscribe(
                 data => {
