@@ -42,7 +42,7 @@ router.put('/:id', function (req, res, next) {
     console.log('router.put id');
     var id = req.params.id;
     var data = JSON.parse(req.body.data);
-    StoryBlockModel.findOneAndUpdate({_id: id}, data, function (err, storyBlock) {
+    StoryBlockModel.findOneAndUpdate({_id: id}, data, function (err) {
         if (err) {
             console.log(err);
         }
@@ -55,12 +55,12 @@ router.delete('/:id', function (req, res, next) {
     console.log('router.delete id');
     var id = req.params.id;
     console.log(id);
-    StoryBlockModel.findOneAndRemove({_id: id}, function (err) {
+    StoryBlockModel.findOneAndRemove({_id: id}, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
         console.log('Found');
-        return res.json({});
+        return res.json(storyBlock);
     }).exec(function (err) {
         console.log('Deleting...');
     });
