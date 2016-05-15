@@ -55,7 +55,7 @@ import {AuthFormComponent} from "./auth-form.component";
             <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
         <auth-form *ngIf="accessFormVisible && !authService.isLoggedIn()" (closeModal)="hideAccessForm()"></auth-form>
-        <div *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></div>
+        <div *ngIf="authService.isLoggedIn()" (click)="authService.logOut()">Logout</div>
         <notification></notification>
     `,
     providers: [StoryBlockService, Configuration, AuthService, WebStorageService],

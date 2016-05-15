@@ -226,6 +226,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     save(index, event) {
+        
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
             this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
                 response => {

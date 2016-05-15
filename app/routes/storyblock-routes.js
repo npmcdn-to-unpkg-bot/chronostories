@@ -47,7 +47,7 @@ router.put('/:id', function (req, res, next) {
             console.log(err);
         }
         console.log('Saving');
-        return res.send('{}');
+        return res.json({});
     });
 });
 
@@ -60,7 +60,7 @@ router.delete('/:id', function (req, res, next) {
             console.log(err);
         }
         console.log('Found');
-        return res.send('{}');
+        return res.json({});
     }).exec(function (err) {
         console.log('Deleting...');
     });
