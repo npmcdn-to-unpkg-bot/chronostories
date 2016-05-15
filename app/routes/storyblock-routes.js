@@ -55,12 +55,12 @@ router.delete('/:id', function (req, res, next) {
     console.log('router.delete id');
     var id = req.params.id;
     console.log(id);
-    StoryBlockModel.findOneAndRemove({_id: id}, function (err) {
+    StoryBlockModel.findOneAndRemove({_id: id}, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
         console.log('Found');
-        return res.json({});
+        return res.json(storyBlock);
     }).exec(function (err) {
         console.log('Deleting...');
     });

@@ -215,18 +215,24 @@ export class StoryBlockComponent implements OnInit {
             },
             error => {
                 console.log('Error while removing', this.storyBlockInfo, error);
-                this.notify.emit('Error. Please try again.');
+                this.notify.emit({
+                    type: 'error',
+                    message: 'Error. Please try again.'
+                });
             },
             () => {
                 console.log('Removing block index ' +this.index);
-                this.notify.emit('Removed successfully.');
+                this.notify.emit({
+                    type: 'success',
+                    message: 'Removed successfully.'
+                });
                 this.removeStoryBlockEvent.emit(this.index);
             }
         );
     }
 
     save(index, event) {
-        
+
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
             this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
                 data => {
@@ -236,11 +242,17 @@ export class StoryBlockComponent implements OnInit {
                 },
                 error => {
                     console.log('Error while saving', this.storyBlockInfo, error);
-                    this.notify.emit('Error. Please try again.');
+                    this.notify.emit({
+                        type: 'error',
+                        message: 'Error. Please try again.'
+                    });
                 },
                 () => {
                     console.log('Saved ', this.storyBlockInfo);
-                    this.notify.emit('Saved successfully.');
+                    this.notify.emit({
+                        type: 'success',
+                        message: 'Saved successfully.'
+                    });
                 }
             );
         } else {

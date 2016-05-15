@@ -2,7 +2,7 @@ import {Component, EventEmitter, Output} from "angular2/core";
 import {User} from "../models/user";
 import {AuthService} from "../services/auth.service";
 import {FormBuilder, Validators, ControlGroup, FORM_DIRECTIVES} from "angular2/common";
-import {emailValidator, matchingPasswords} from '../services/validators.service';
+import {emailValidator, matchingPasswords, emailRegexp} from '../services/validators.service';
 import {WebStorageService} from "../services/webstorage.service";
 import {Configuration} from "../config/configuration";
 
@@ -55,12 +55,12 @@ import {Configuration} from "../config/configuration";
                     #confirmPassword="ngForm"
                     >
                 <label for="confirm-password">Password</label>
-                <div *ngIf="(confirmPassword.dirty || submitted) && !confirmPassword.valid" class="panel panel-error">
+                <div *ngIf="(confirmPassword.dirty || submitted) && form.hasError('mismatchedPasswords')" class="panel panel-error">
                     The passwords don't match
                 </div>
               </div>
               <button type="submit" class="button primary block-button">Sign up</button>
-              <a (click)="swapToSignIn()">...or login now!</a>
+              <div class="swap-form"><a (click)="swapToSignIn()">I already have an account</a></div>
             </form>
         </div>
     `,
@@ -75,14 +75,15 @@ export class SignUpComponent {
 
     @Output() closeModal:EventEmitter<any> = new EventEmitter();
     @Output() swapWindow:EventEmitter<any> = new EventEmitter();
+    @Output() notify:EventEmitter<any> = new EventEmitter();
 
     constructor(private authService:AuthService, private builder:FormBuilder, private webStorageService:WebStorageService, private configuration:Configuration) {
         this.user = new User();
         this.submitted = false;
         this.form = builder.group({
-            name: ['', Validators.required],
-            email: ['', Validators.compose([Validators.required, emailValidator])],
-            password: ['', Validators.required],
+            name:[''],
+            email: ['', Validators.compose([Validators.required, Validators.pattern(emailRegexp)])],
+            password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
             confirmPassword: ['', Validators.required],
         }, {validator: matchingPasswords('password', 'confirmPassword')})
     }
@@ -103,7 +104,13 @@ export class SignUpComponent {
                 data => {
                     this.webStorageService.put(this.configuration.token.name, data);
                 },
-                err => console.error(err),
+                err => {
+                    console.error(err);
+                    this.notify.emit({
+                        type: 'error',
+                        message: 'The email is already taken'
+                    });
+                },
                 () => {
                     console.log('registered');
                     this.close('');

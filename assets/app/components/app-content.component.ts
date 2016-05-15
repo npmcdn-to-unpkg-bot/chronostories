@@ -53,12 +53,16 @@ import {AuthFormComponent} from "./auth-form.component";
             (endDragging)="addStoryBlock($event)"
             [storyBlock]="exposedStoryBlock"></sidebar>
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
-            <a class="user-aside" [hidden]="authService.isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
-            <a class="user-aside" [hidden]="!authService.isLoggedIn()" (click)="authService.logOut()">Logout</a>
+            <a class="user-aside" *ngIf="!isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
+            <a class="user-aside" *ngIf="isLoggedIn()" (click)="logOut()">Logout</a>
             <a id="close-menu" (click)="toggleMenu(false)"></a>
         </aside>
         <header><a id="burger" (click)="toggleMenu(true)"><i class="fa fa-bars" aria-hidden="true"></i></a></header>
-        <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
+        <auth-form 
+            *ngIf="accessFormVisible" 
+            (closeModal)="hideAccessForm()"
+            (notify)="notify($event)"
+            ></auth-form>
         <notification></notification>
     `,
     providers: [StoryBlockService, Configuration, AuthService, WebStorageService],
@@ -140,6 +144,7 @@ export class AppComponent implements OnInit {
 
     showAccessForm() {
         this.toggleMenu(false);
+        console.log(this.authService.isLoggedIn());
         this.accessFormVisible = true;
         document.querySelector('body').classList.add('no-scroll');
     }
@@ -170,6 +175,14 @@ export class AppComponent implements OnInit {
             }
         }
         console.log('Numbering after',this.storyBlocks);
+    }
+
+    logOut(){
+        this.authService.logout();
+    }
+
+    isLoggedIn(){
+        return this.authService.isLoggedIn();
     }
 
     zoomIn() {
@@ -254,7 +267,16 @@ export class AppComponent implements OnInit {
     }
 
     notify(notification){
-        this.notificationComponent.show(notification);
+        if((notification || {}).type == 'error'){
+            this.notificationComponent.error(notification.message || '');
+        }
+        else if((notification || {}).type == 'success'){
+            this.notificationComponent.success(notification.message || '');
+        }
+        else{
+            this.notificationComponent.message(notification.message || '');
+        }
+
     }
 
     downloadPdf(){
