@@ -28,7 +28,7 @@ export class AuthService {
             headers: headers
         });
 
-        return this.http.post('/auth/login',
+        return this.http.post(this.configuration.apiBasePath + '/auth/login',
                 "name=" + user.name + "&" +
                 "email=" + user.email + "&" +
                 "password=" + user.password,
@@ -45,7 +45,7 @@ export class AuthService {
         let options = new RequestOptions({
             headers: headers
         });
-        return this.http.post('/auth/register',
+        return this.http.post(this.configuration.apiBasePath + '/auth/register',
                 "email=" + user.email + "&" +
                 "password=" + user.password,
             options)

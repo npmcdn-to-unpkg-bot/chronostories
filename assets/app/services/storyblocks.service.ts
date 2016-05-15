@@ -8,6 +8,7 @@ import {Observer} from 'rxjs/Observer';
 import {STORYBLOCKS} from "../mock/mock-storyblocks";
 import {StoryBlockType} from "../models/storyblock-type";
 import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
+import {Configuration} from "../config/configuration";
 declare var pdfMake: any;
 
 @Injectable()
@@ -15,10 +16,10 @@ export class StoryBlockService {
     private _exposedIndex = -1;
     indexChange$: Observable<number>;
     private _observer: Observer<number>;
-    constructor(public http:Http) {
+
+    constructor(public http:Http, private configuration:Configuration) {
         this.indexChange$ = new Observable(observer =>
             this._observer = observer).share();
-        // share() allows multiple subscribers
     }
     changeExposedIndex(index) {
         this._exposedIndex = index;
@@ -29,7 +30,7 @@ export class StoryBlockService {
     }
 
     getStoryBlocks(userId):Observable<StoryBlock[]> {
-        return this.http.get('/storyblocks/'+userId)
+        return this.http.get(this.configuration.apiBasePath + '/storyblocks/'+userId)
             .map(res => res.json());
     }
 
@@ -43,18 +44,18 @@ export class StoryBlockService {
         });
 
         if (!!storyBlock._id) {
-            return this.http.put('/storyblocks/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
+            return this.http.put(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json());
         }
         else {
-            return this.http.post('/storyblocks/'+userId +'/' , "data=" + JSON.stringify(storyBlock), options)
+            return this.http.post(this.configuration.apiBasePath + '/storyblocks/'+userId +'/' , "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json());
         }
     }
 
     deleteStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock[]> {
         if (!!storyBlock._id) {
-            return this.http.delete('/storyblocks/' + userId + '/' + storyBlock._id)
+            return this.http.delete(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id)
                 .map(res => res.json());
         }
         return null;
@@ -77,7 +78,7 @@ export class StoryBlockService {
         let options = new RequestOptions({
             headers: headers
         });
-        this.http.post('/storyblocks/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
+        this.http.post(this.configuration.apiBasePath + '/storyblocks/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
     }
 
     downloadPdf(storyBlocks:StoryBlock[]) {
