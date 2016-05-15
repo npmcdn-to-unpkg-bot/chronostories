@@ -113,11 +113,13 @@ export class StoryBlockService {
             styles: {
                 chapter: {
                     fontSize: 22,
-                    bold: true
+                    bold: true,
+                    margin: [0, 16, 0, 8]
                 },
                 paragraph: {
                     fontSize: 18,
-                    bold: true
+                    bold: true,
+                    margin: [0, 0, 0, 12]
                 }
             }
         };
@@ -126,7 +128,7 @@ export class StoryBlockService {
             docDefinition.content.push(
                 {
                     text: storyBlocks[i].title,
-                    style: storyBlocks[i].type
+                    style: storyBlocks[i].type,
                 }
             );
             docDefinition.content.push(
