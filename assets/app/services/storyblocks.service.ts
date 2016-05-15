@@ -44,10 +44,14 @@ export class StoryBlockService {
         });
 
         if (!!storyBlock._id) {
+            storyBlock.createdAt = storyBlock.createdAt || (new Date());
+            storyBlock.lastModifiedAt = (new Date());
             return this.http.put(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json());
         }
         else {
+            storyBlock.createdAt = (new Date());
+            storyBlock.lastModifiedAt = (new Date());
             return this.http.post(this.configuration.apiBasePath + '/storyblocks/'+userId +'/' , "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json());
         }
@@ -83,6 +87,8 @@ export class StoryBlockService {
 
         for(var i=0; i<blocks.length; i++){
             blocks[i].userId = userId;
+            blocks[i].createdAt = (new Date());
+            blocks[i].lastModifiedAt = (new Date());
         }
         
         return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(blocks), options).map(res => res.json());

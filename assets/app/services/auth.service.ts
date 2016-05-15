@@ -61,7 +61,6 @@ export class AuthService {
         var tokenDataRaw = atob(tokenDataSplit);
 
         var tokenData = JSON.parse(tokenDataRaw) as JwtToken;
-        console.log(tokenData);
         return (tokenData.exp || 0) > Date.now() / 1000;
     };
 
