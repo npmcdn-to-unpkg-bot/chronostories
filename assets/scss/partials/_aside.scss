@@ -48,7 +48,7 @@ aside {
     padding: $gutter $gutter (44px + $gutter*2) $gutter;
     @include flex(1);
 
-    .sidebar-action {
+    .sidebar-action, .sidebar-info, .sidebar-count {
       &:not(:last-of-type) {
         margin-bottom: $gutter;
       }
@@ -108,6 +108,36 @@ aside {
           margin-bottom: 8px;
           font-size: 13px;
         }
+      }
+    }
+
+    .sidebar-info {
+      @include clearfix();
+      .label {
+        float: left;
+        font-size: 13px;
+      }
+      .info {
+        float: right;
+        font-size: 10px;
+        font-style: italic;
+        padding: 3px 0;
+      }
+    }
+
+    .sidebar-count {
+      @include clearfix();
+      .label {
+        float: left;
+        font-size: 13px;
+      }
+      .count {
+        float: right;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 6px;
+        background: rgba($black, .1);
+        @include rounded();
       }
     }
 

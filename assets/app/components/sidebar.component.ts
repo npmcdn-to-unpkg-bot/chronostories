@@ -1,5 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter} from "angular2/core";
 import {StoryBlockService} from "../services/storyblocks.service";
+import {UtilsService} from "../services/utils.service";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockType} from "../models/storyblock-type";
 
@@ -10,13 +11,13 @@ import {StoryBlockType} from "../models/storyblock-type";
             <div class="sidebar-action">
                 <a class="create-storyblock" draggable="true" (dragstart)="dragStart($event)" (dragend)="dragEnd($event)">Create storyblock</a>
             </div>
-            <div class="sidebar-action">
-                <small><strong>Total chapters:</strong> {{_storyBlocksLength}}</small>
+            <div class="sidebar-count">
+                <span class="label">Total chapters</span><span class="count">{{_storyBlocksLength}}</span>
             </div>
         </div>
         <div *ngIf="_index >= 0 && !!_storyBlock">
             <div class="sidebar-action">
-                <h3><span class="capital-letter">{{_storyBlock.type}}</span> {{_index}}</h3>
+                <h3><span class="capital-letter">Chapter</span> {{_storyBlock.blockNumber+1}}</h3>
             </div>
             <div class="sidebar-action">
                 <div class="form-group">
@@ -28,11 +29,18 @@ import {StoryBlockType} from "../models/storyblock-type";
                     </div>
                 </div>
             </div>
-            <div class="sidebar-action">
-                <small><strong>Total characters:</strong> {{_storyBlock.description.length}}</small>
+            <div class="sidebar-count">
+                <span class="label">Total characters</span><span class="count">{{_storyBlock.description.length}}</span>
+            </div>
+            <div class="sidebar-info">
+                <span class="label">Created</span><span class="info">{{utilsService.getHumanDate(_storyBlock.createdAt)}}</span>
+            </div>
+            <div class="sidebar-info">
+                <span class="label">Last modified</span><span class="info">{{utilsService.getHumanDate(_storyBlock.lastModifiedAt)}}</span>
             </div>
         </div>
     `,
+    providers: [UtilsService],
     inputs: ['storyBlock', 'storyBlocksLength']
 })
 export class SidebarComponent implements OnInit {
@@ -46,7 +54,7 @@ export class SidebarComponent implements OnInit {
     @Output() startDragging:EventEmitter<any> = new EventEmitter();
     @Output() endDragging:EventEmitter<any> = new EventEmitter();
 
-    constructor(private _storyBlockService:StoryBlockService) {}
+    constructor(private _storyBlockService:StoryBlockService, private utilsService:UtilsService) {}
     @Input()
     set storyBlock(storyBlock) {
         this._storyBlock = storyBlock;

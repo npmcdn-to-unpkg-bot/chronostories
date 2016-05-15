@@ -7,5 +7,7 @@ export interface StoryBlock {
     importance:number,
     blockNumber:number,
     type:string,
-    userId:string
+    userId:string,
+    createdAt:any,
+    lastModifiedAt:any
 }

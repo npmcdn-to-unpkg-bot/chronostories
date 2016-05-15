@@ -19,4 +19,9 @@ export class UtilsService {
             roman = (key[+digits.pop() + (i * 10)] || "") + roman;
         return Array(+digits.join("") + 1).join("M") + roman;
     }
+
+    getHumanDate(d):string{
+        var date = new Date(d);
+        return (date.getMonth() + '/' + date.getDate() + '/' +  date.getFullYear() + ' at ' + date.getHours() + ':' + date.getMinutes());
+    }
 }
