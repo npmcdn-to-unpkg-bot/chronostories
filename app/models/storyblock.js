@@ -5,7 +5,8 @@ var StoryBlockSchema = new mongoose.Schema({
     title: String,
     description: String,
     timePosition: Number,
-    importance: Number
+    importance: Number,
+    type: String
 });
 
 module.exports = mongoose.model('StoryBlocks', StoryBlockSchema);

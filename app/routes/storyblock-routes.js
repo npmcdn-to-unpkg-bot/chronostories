@@ -4,9 +4,15 @@ var StoryBlockModel = require('../models/storyblock');
 
 router.get('/', function (req, res) {
     console.log('router.get');
-    StoryBlockModel.find(function (err, storyBlock) {
-        res.send(storyBlock);
-    })
+    StoryBlockModel.find(
+        {},
+        null,
+        {
+            sort : 'timePosition'
+        },
+        function (err, storyBlock) {
+            res.send(storyBlock);
+        })
 });
 
 router.post('/', function (req, res, next) {
@@ -27,9 +33,8 @@ router.get('/:id', function (req, res, next) {
     StoryBlockModel.findById(id, function (err, storyBlock) {
         if (err) {
             console.log(err);
-            return res.status;
         }
-        res.json(storyBlock);
+        return res.json(storyBlock);
     });
 });
 
@@ -37,7 +42,7 @@ router.put('/:id', function (req, res, next) {
     console.log('router.put id');
     var id = req.params.id;
     var data = JSON.parse(req.body.data);
-    StoryBlockModel.findOneAndUpdate({_id : id}, data, function (err, storyBlock) {
+    StoryBlockModel.findOneAndUpdate({_id: id}, data, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
@@ -56,7 +61,7 @@ router.delete('/:id', function (req, res, next) {
         }
         console.log('Found');
         return res.send('');
-    }).exec(function(err){
+    }).exec(function (err) {
         console.log('Deleting...');
     });
 });

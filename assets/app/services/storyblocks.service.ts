@@ -17,7 +17,7 @@ export class StoryBlockService {
             .map(res => res.json());
     }
 
-    saveStoryBlock(storyBlock:StoryBlock):Observable<StoryBlock[]> {
+    saveStoryBlock(storyBlock:StoryBlock):Observable<StoryBlock> {
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });

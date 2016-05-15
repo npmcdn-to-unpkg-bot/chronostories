@@ -96,7 +96,9 @@ export class AppComponent implements OnInit {
                 this.maxIndex = 0;
 
                 for (var i = 0; i < this.storyBlocks.length; i++) {
-                    this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
+                    if (!!this.storyBlocks[i].type) {
+                        this.storyBlocks[i].type = 'chapter'
+                    }
                 }
             },
             err => console.error(err),
@@ -163,12 +165,24 @@ export class AppComponent implements OnInit {
             title: '',
             description: '',
             timePosition: positionAtZoom,
-            importance: 3
+            importance: 3,
+            type: 'chapter'
         };
         this.maxIndex++;
-        this.storyBlocks.push(newStoryBlock);
-        console.log('Adding block index ' + (this.storyBlocks.length - 1));
-        this.setExposed(this.storyBlocks.length - 1);
+
+        var tmpArrayPos = undefined;
+
+        for (var i = 0; i < this.storyBlocks.length; i++) {
+            if(this.storyBlocks[i].timePosition > positionAtZoom){
+                tmpArrayPos = i;
+                break;
+            }
+        }
+
+        this.storyBlocks.splice(tmpArrayPos, 0, newStoryBlock);
+
+        console.log('Adding block index ' + tmpArrayPos);
+        this.setExposed(tmpArrayPos);
         event.preventDefault();
         event.stopPropagation();
     }

@@ -4,5 +4,6 @@ export interface StoryBlock {
     title:string,
     description:string,
     timePosition:number,
-    importance:number
+    importance:number,
+    type:string
 }
