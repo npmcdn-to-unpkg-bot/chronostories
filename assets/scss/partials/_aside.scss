@@ -26,30 +26,40 @@ aside {
         display: block;
         position: relative;
         text-align: center;
-        border: 2px $white dashed;
+        font-size: 14px;
+        border: 2px rgba($white, .5) dashed;
         padding: 8px $gutter/2;
         cursor: move; /* fallback if grab cursor is unsupported */
         cursor: grab;
         cursor: -moz-grab;
         cursor: -webkit-grab;
+        //@include transition(border-color);
+
         &:active {
           cursor: grabbing;
           cursor: -moz-grabbing;
           cursor: -webkit-grabbing;
         }
-        &:hover:after {
-          content: 'Drag me over the timeline';
-          position: absolute;
-          top: 100%;
-          left: 50%;
-          color: $white;
-          padding: 6px;
-          font-size: 9px;
-          white-space: nowrap;
-          background: rgba($tundora, .75);
-          @extend .sans-serif;
-          @include rounded();
-          @include translateX(-50%);
+        &:hover{
+          border-color: $white;
+          &:after {
+            content: 'Drop me over the timeline';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            color: $white;
+            padding: 6px;
+            font-size: 9px;
+            white-space: nowrap;
+            background: rgba($tundora, .75);
+            @extend .sans-serif;
+            @include rounded();
+            @include translateX(-50%);
+          }
+        }
+
+        i {
+          margin-right: 6px;
         }
       }
 

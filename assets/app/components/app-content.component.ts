@@ -46,7 +46,9 @@ import {StoryBlockType} from "../models/storyblock-type";
             </div>
         </main>
         <aside>
-            <sidebar [storyBlock]="exposedStoryBlock"></sidebar>
+            <sidebar
+            (addDragged)="addStoryBlock($event)"
+            [storyBlock]="exposedStoryBlock"></sidebar>
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
             <a class="user-aside" (click)="showAccessForm()">Login/Signup</a>
         </aside>
@@ -236,7 +238,6 @@ export class AppComponent implements OnInit {
 
     notify(notification){
         this.notificationComponent.show(notification);
-
     }
 
     downloadPdf(){

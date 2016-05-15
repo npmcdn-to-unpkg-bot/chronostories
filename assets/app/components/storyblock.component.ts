@@ -210,40 +210,47 @@ export class StoryBlockComponent implements OnInit {
 
     remove(index, event) {
         this.storyBlockService.deleteStoryBlock(this.storyBlockInfo).subscribe(
-            data => {
-                console.log(data)
+            response => {
+                console.log(response);
+            },
+            error => {
+                console.log('Error while removing', this.storyBlockInfo, error);
+                this.notify.emit('Error. Please try again.');
             },
             () => {
                 console.log('Removing block index ' +this.index);
+                this.notify.emit('Removed successfully.');
                 this.removeStoryBlockEvent.emit(this.index);
             }
         );
     }
 
     save(index, event) {
-        this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
-            data => {
-                this.storyBlockInfo = <StoryBlock>data;
-                console.log('Saving temporary data ', this.storyBlockInfo);
-                this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
-            },
-            () => {
-                console.log('Saved ', this.storyBlockInfo);
-                this.notify.emit('Saved successfully');
-            },
-            () => {
-                console.log('Error while saving ', this.storyBlockInfo);
-                this.notify.emit('Error. Please try again.');
-            }
-        );
+        if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
+            this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
+                response => {
+                    this.storyBlockInfo = <StoryBlock>response;
+                    console.log('Saving temporary data ', this.storyBlockInfo);
+                    this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
+                },
+                error => {
+                    console.log('Error while saving', this.storyBlockInfo, error);
+                    this.notify.emit('Error. Please try again.');
+                },
+                () => {
+                    console.log('Saved ', this.storyBlockInfo);
+                    this.notify.emit('Saved successfully.');
+                }
+            );
+        } else {
+            this.notify.emit('Please insert a title or some content.');
+        }
     }
 
     close() {
         this.exposeEvent.emit(-1);
-        if (!!this.storyBlockLocalSave) {
-            this.storyBlockInfo = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockLocalSave));
-        }
-        else{
+
+        if (!this.storyBlockLocalSave) {
             console.log('Removing block index ' +this.index);
             this.removeStoryBlockEvent.emit(this.index);
         }
