@@ -2,7 +2,7 @@ import {Component, EventEmitter, Output} from "angular2/core";
 import {User} from "../models/user";
 import {AuthService} from "../services/auth.service";
 import {FormBuilder, Validators, ControlGroup, FORM_DIRECTIVES} from "angular2/common";
-import {emailValidator, matchingPasswords} from '../services/validators.service';
+import {emailValidator, matchingPasswords, emailRegexp} from '../services/validators.service';
 import {WebStorageService} from "../services/webstorage.service";
 import {Configuration} from "../config/configuration";
 
@@ -58,7 +58,7 @@ export class SignInComponent {
         this.user = new User();
         this.submitted = false;
         this.form = builder.group({
-            email: ['', Validators.compose([Validators.required,  emailValidator])],
+            email: ['', Validators.compose([Validators.required, Validators.pattern(emailRegexp)])],
             password: ['', Validators.required],
         })
     }

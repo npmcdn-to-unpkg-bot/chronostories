@@ -2,7 +2,7 @@ import {Component, EventEmitter, Output} from "angular2/core";
 import {User} from "../models/user";
 import {AuthService} from "../services/auth.service";
 import {FormBuilder, Validators, ControlGroup, FORM_DIRECTIVES} from "angular2/common";
-import {emailValidator, matchingPasswords} from '../services/validators.service';
+import {emailValidator, matchingPasswords, emailRegexp} from '../services/validators.service';
 import {WebStorageService} from "../services/webstorage.service";
 import {Configuration} from "../config/configuration";
 
@@ -55,7 +55,7 @@ import {Configuration} from "../config/configuration";
                     #confirmPassword="ngForm"
                     >
                 <label for="confirm-password">Password</label>
-                <div *ngIf="(confirmPassword.dirty || submitted) && !confirmPassword.valid" class="panel panel-error">
+                <div *ngIf="(confirmPassword.dirty || submitted) && form.hasError('mismatchedPasswords')" class="panel panel-error">
                     The passwords don't match
                 </div>
               </div>
@@ -80,9 +80,9 @@ export class SignUpComponent {
         this.user = new User();
         this.submitted = false;
         this.form = builder.group({
-            name: ['', Validators.required],
-            email: ['', Validators.compose([Validators.required, emailValidator])],
-            password: ['', Validators.required],
+            name:[''],
+            email: ['', Validators.compose([Validators.required, Validators.pattern(emailRegexp)])],
+            password: ['', Validators.compose([Validators.required, Validators.minLength(6)])],
             confirmPassword: ['', Validators.required],
         }, {validator: matchingPasswords('password', 'confirmPassword')})
     }
