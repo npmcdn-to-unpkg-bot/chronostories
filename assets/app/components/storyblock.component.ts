@@ -210,8 +210,8 @@ export class StoryBlockComponent implements OnInit {
 
     remove(index, event) {
         this.storyBlockService.deleteStoryBlock(this.storyBlockInfo).subscribe(
-            response => {
-                console.log(response);
+            data => {
+                console.log(data);
             },
             error => {
                 console.log('Error while removing', this.storyBlockInfo, error);
@@ -229,9 +229,9 @@ export class StoryBlockComponent implements OnInit {
         
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
             this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
-                response => {
-                    this.storyBlockInfo = <StoryBlock>response;
-                    console.log('Saving temporary data ', this.storyBlockInfo);
+                data => {
+                    this.storyBlockInfo = <StoryBlock>data;
+                    console.log('Saving temporary data ', data, this.storyBlockInfo);
                     this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
                 },
                 error => {

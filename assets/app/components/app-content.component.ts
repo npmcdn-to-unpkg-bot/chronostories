@@ -47,14 +47,17 @@ import {AuthFormComponent} from "./auth-form.component";
                 </div>            
             </div>
         </main>
-        <aside>
+        <aside [ngClass]="{visible: menuVisible}">
             <sidebar
-            (addDragged)="addStoryBlock($event)"
+            (startDragging)="toggleMenu(false)"
+            (endDragging)="addStoryBlock($event)"
             [storyBlock]="exposedStoryBlock"></sidebar>
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
             <a class="user-aside" [hidden]="authService.isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
             <a class="user-aside" [hidden]="!authService.isLoggedIn()" (click)="authService.logOut()">Logout</a>
+            <a id="close-menu" (click)="toggleMenu(false)"></a>
         </aside>
+        <header><a id="burger" (click)="toggleMenu(true)"><i class="fa fa-bars" aria-hidden="true"></i></a></header>
         <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
         <notification></notification>
     `,
@@ -73,6 +76,7 @@ export class AppComponent implements OnInit {
     public exposedStoryBlock;
     public addButton;
     public token:string = '';
+    public menuVisible;
     public accessFormVisible;
     private maxIndex = 0;
 
@@ -89,6 +93,7 @@ export class AppComponent implements OnInit {
             visible: false,
             top: 0
         };
+        this.menuVisible = false;
         this.accessFormVisible = false;
         // this.storyBlockService.generateTestData().subscribe(
         //     err => console.error(err),
@@ -134,6 +139,7 @@ export class AppComponent implements OnInit {
     }
 
     showAccessForm() {
+        this.toggleMenu(false);
         this.accessFormVisible = true;
         document.querySelector('body').classList.add('no-scroll');
     }
@@ -253,5 +259,15 @@ export class AppComponent implements OnInit {
 
     downloadPdf(){
         this.storyBlockService.downloadPdf(this.storyBlocks);
+    }
+
+    toggleMenu(visibility){
+        this.menuVisible = visibility;
+        if(visibility){
+            document.querySelector('body').classList.add('no-scroll');
+        }
+        else {
+            document.querySelector('body').classList.remove('no-scroll');
+        }
     }
 }

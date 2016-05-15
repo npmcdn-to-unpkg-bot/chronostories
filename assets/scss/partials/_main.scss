@@ -1,17 +1,26 @@
 main {
   position: absolute;
   left: 0;
-  right: $aside-width;
+  right: 0;
+
+  @media #{$tablet-up}{
+    right: $aside-width;
+  }
 }
 
 #controls {
   position: fixed;
-  right: $gutter + $aside-width;
-  top: $gutter;
+  right: $gutter;
+  top: $gutter + 48px; // 48px is header height
   background-color: $white;
   overflow: hidden;
   @include shadows(0px 1px 4px rgba($black,0.3));
   @include rounded();
+
+  @media #{$tablet-up}{
+    right: $gutter + $aside-width;
+    top: $gutter;
+  }
 
   a {
     display: block;

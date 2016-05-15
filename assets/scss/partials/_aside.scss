@@ -2,12 +2,47 @@ aside {
   position: fixed;
   top: 0;
   bottom: 0;
-  right: 0;
+  right: $aside-width * (-1);
   width: $aside-width;
   color: $white;
   background: $mountain-meadow;
+  z-index: 999;
   @include flexbox();
   @include flex-flow(column nowrap);
+  @include transition(right);
+
+  &.visible {
+    right: 0;
+
+    #close-menu {
+      right: $aside-width;
+      opacity: 1;
+      @media #{$tablet-up}{
+        display: none;
+      }
+    }
+  }
+
+  @media #{$tablet-up}{
+    right: 0;
+  }
+
+  #close-menu {
+    position: fixed;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    right: 100%;
+    bottom: 0;
+    cursor: pointer;
+    background: rgba($tundora, .75);
+    z-index: 1;
+    @include transition(right opacity);
+    @media #{$tablet-up}{
+      display: none;
+    }
+  }
+  
   sidebar {
     position: relative;
     padding: $gutter $gutter (44px + $gutter*2) $gutter;

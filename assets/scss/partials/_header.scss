@@ -1,0 +1,19 @@
+header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  text-align: right;
+  background: $mountain-meadow;
+  z-index: 3;
+
+  #burger {
+    cursor: pointer;
+    display: inline-block;
+    padding: 13px $gutter;
+    color: $white;
+    @media #{$tablet-up}{
+      display: none;
+    }
+  }
+}
