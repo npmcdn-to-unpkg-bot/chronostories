@@ -52,8 +52,8 @@ import {AuthFormComponent} from "./auth-form.component";
             (addDragged)="addStoryBlock($event)"
             [storyBlock]="exposedStoryBlock"></sidebar>
             <a class="user-aside" (click)="downloadPdf()">Download PDF</a>
-            <a class="user-aside" [hidden]="authService.isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
-            <a class="user-aside" [hidden]="!authService.isLoggedIn()" (click)="authService.logOut()">Logout</a>
+            <a class="user-aside" *ngIf="!isLoggedIn()" (click)="showAccessForm()">Login/Signup</a>
+            <a class="user-aside" *ngIf="isLoggedIn()" (click)="logOut()">Logout</a>
         </aside>
         <auth-form *ngIf="accessFormVisible" (closeModal)="hideAccessForm()"></auth-form>
         <notification></notification>
@@ -134,6 +134,7 @@ export class AppComponent implements OnInit {
     }
 
     showAccessForm() {
+        console.log(this.authService.isLoggedIn());
         this.accessFormVisible = true;
         document.querySelector('body').classList.add('no-scroll');
     }
@@ -164,6 +165,14 @@ export class AppComponent implements OnInit {
             }
         }
         console.log('Numbering after',this.storyBlocks);
+    }
+
+    logOut(){
+        this.authService.logout();
+    }
+
+    isLoggedIn(){
+        return this.authService.isLoggedIn();
     }
 
     zoomIn() {
