@@ -12,6 +12,7 @@ import {StoryBlockType} from "../models/storyblock-type";
 import {AuthService} from "../services/auth.service";
 import {WebStorageService} from "../services/webstorage.service";
 import {AuthFormComponent} from "./auth-form.component";
+import {STORYBLOCKS} from "../mock/mock-storyblocks";
 
 
 @Component({
@@ -155,6 +156,10 @@ export class AppComponent implements OnInit {
                         this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
                     }
                 }
+                if(!!this.storyBlocks || this.storyBlocks.length==0){
+                    this.storyBlocks = this.storyBlockService.generateTestData(this.userId);
+                }
+
                 this.recalculateStoryBlockNumbers();
 
             },

@@ -69,7 +69,7 @@ export class StoryBlockService {
         return STORYBLOCK_TYPES;
     }
 
-    generateTestData() {
+    generateTestData(userId):StoryBlock[] {
         console.log('Creating temporary data');
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -78,7 +78,9 @@ export class StoryBlockService {
         let options = new RequestOptions({
             headers: headers
         });
-        this.http.post(this.configuration.apiBasePath + '/storyblocks/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
+        this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
+        
+        return STORYBLOCKS;
     }
 
     downloadPdf(storyBlocks:StoryBlock[]) {
