@@ -6,7 +6,7 @@ aside {
   width: $aside-width;
   color: $white;
   background: $mountain-meadow;
-  z-index: 999;
+  z-index: 99;
   @include flexbox();
   @include flex-flow(column nowrap);
   @include transition(right);
