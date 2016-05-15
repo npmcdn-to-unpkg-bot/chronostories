@@ -108,7 +108,7 @@ export class AppComponent implements OnInit {
             message: '',
         };
     }
-    
+
     authUser(){
         if (this.authService.isLoggedIn()) {
             return this.authService.getIdFromToken();
@@ -121,11 +121,11 @@ export class AppComponent implements OnInit {
             return this.authService.getIdFromAnonymousToken(anonymousToken);
         }
     }
-    
+
     setToken(value:string){
         this.webStorageService.put('token',value);
-    }    
-    
+    }
+
     getToken(){
         return this.webStorageService.get('token');
     }
@@ -155,7 +155,9 @@ export class AppComponent implements OnInit {
                         this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
                     }
                 }
-                if(!!this.storyBlocks){
+                if(!this.storyBlocks){
+
+                    console.log('No blocks received!');
                     this.storyBlockService.generateTestData(this.userId).subscribe(
                         saveDefaultBlocks => {
                             this.storyBlocks = saveDefaultBlocks;

@@ -74,7 +74,7 @@ export class StoryBlockService {
     }
 
     generateTestData(userId):Observable<StoryBlock[]> {
-        console.log('Creating temporary data');
+        console.log('Creating temporary data for ' + userId);
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });
