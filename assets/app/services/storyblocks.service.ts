@@ -4,6 +4,8 @@ import {StoryBlock} from "../models/storyblock";
 import 'rxjs/Rx';
 import {Observable} from "rxjs/Observable";
 import {STORYBLOCKS} from "../mock/mock-storyblocks";
+import {StoryBlockType} from "../models/storyblock-type";
+import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
 
 @Injectable()
 export class StoryBlockService {
@@ -43,6 +45,13 @@ export class StoryBlockService {
         }
         return null;
     }
+    
+    getStoryBlockTypes():StoryBlockType[]{
+        return STORYBLOCK_TYPES;
+    }    
+    getStoryBlockDefaultTypes():StoryBlockType[]{
+        return STORYBLOCK_TYPES;
+    }
 
     generateTestData() {
         console.log('Creating temporary data');
@@ -53,6 +62,6 @@ export class StoryBlockService {
         let options = new RequestOptions({
             headers: headers
         });
-        return this.http.post('/storyblocks/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text());
+        this.http.post('/storyblocks/', "data=" + JSON.stringify(STORYBLOCKS), options).map(res => res.text()).subscribe();
     }
 }

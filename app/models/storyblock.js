@@ -6,6 +6,7 @@ var StoryBlockSchema = new mongoose.Schema({
     description: String,
     timePosition: Number,
     importance: Number,
+    blockNumber: Number,
     type: String
 });
 

@@ -9,6 +9,8 @@ import {SidebarComponent} from "./sidebar.component";
 import {AuthFormComponent} from "./auth-form.component";
 import {User} from "../models/user";
 import {Configuration} from "../config/configuration";
+import {StoryBlockType} from "../models/storyblock-type";
+import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
 // import {LocalStorage} from "angular2-localstorage/LocalStorage";
 
 @Component({
@@ -57,6 +59,9 @@ import {Configuration} from "../config/configuration";
 
 export class AppComponent implements OnInit {
     public storyBlocks:StoryBlock[];
+    public storyBlockTypes:StoryBlockType[];
+    public storyBlockDefaultTypes:StoryBlockType[];
+
     zoomLevel = 10;
     public selectedIndex = 0;
     public exposedIndex = -1;
@@ -73,6 +78,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit():any {
+        this.getStoryBlockTypes();
         this.getStoryBlocks();
         this.zoomLevel = 10;
         this.selectedIndex = 0;
@@ -88,6 +94,11 @@ export class AppComponent implements OnInit {
         // );
     }
 
+    getStoryBlockTypes() {
+        this.storyBlockTypes = this.storyBlockService.getStoryBlockTypes();
+        this.storyBlockDefaultTypes = this.storyBlockService.getStoryBlockDefaultTypes();
+    }
+
     getStoryBlocks() {
         this.storyBlockService.getStoryBlocks().subscribe(
             data => {
@@ -96,13 +107,15 @@ export class AppComponent implements OnInit {
                 this.maxIndex = 0;
 
                 for (var i = 0; i < this.storyBlocks.length; i++) {
-                    if (!!this.storyBlocks[i].type) {
-                        this.storyBlocks[i].type = 'chapter'
+                    if (this.storyBlocks[i].type === 'chapter') {
+                        this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
                     }
                 }
+                this.recalculateStoryBlockNumbers();
+
             },
             err => console.error(err),
-            () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks')
+            () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
         );
     }
 
@@ -118,6 +131,29 @@ export class AppComponent implements OnInit {
     hideAccessForm() {
         this.accessFormVisible = false;
         document.querySelector('body').classList.remove('no-scroll');
+    }
+
+    recalculateStoryBlockNumbers() {
+        console.log('Numbering before',this.storyBlocks);
+        var currentTypes = {};
+        for (var i = 0; i < this.storyBlockTypes.length; i++) {
+            currentTypes[this.storyBlockTypes[i].id] = this.storyBlockTypes[i];
+            currentTypes[this.storyBlockTypes[i].id].index = 0;
+        }
+
+        for (var i = 0; i < this.storyBlocks.length; i++) {
+            var currentType = this.storyBlocks[i].type || this.storyBlockDefaultTypes[0].id;
+            currentTypes[currentType] = currentTypes[currentType] || this.storyBlockDefaultTypes[0];
+            this.storyBlocks[i].blockNumber = currentTypes[currentType].index || 0;
+
+            currentTypes[currentType].index++;
+            for (var j = 0; j < this.storyBlockTypes.length; j++) {
+                if (this.storyBlockTypes[j].level > currentTypes[currentType].level) {
+                    currentTypes[this.storyBlockTypes[j].id].index = 0;
+                }
+            }
+        }
+        console.log('Numbering after',this.storyBlocks);
     }
 
     zoomIn() {
@@ -173,7 +209,7 @@ export class AppComponent implements OnInit {
         var tmpArrayPos = undefined;
 
         for (var i = 0; i < this.storyBlocks.length; i++) {
-            if(this.storyBlocks[i].timePosition > positionAtZoom){
+            if (this.storyBlocks[i].timePosition > positionAtZoom) {
                 tmpArrayPos = i;
                 break;
             }
@@ -188,6 +224,7 @@ export class AppComponent implements OnInit {
     }
 
     setExposed(index) {
+        this.recalculateStoryBlockNumbers();
         this.exposedIndex = index;
         document.querySelector('body').classList.toggle('no-scroll');
     }
@@ -203,6 +240,12 @@ export class AppComponent implements OnInit {
         if (block.index > 0) {
             this.selectedIndex = block.index - 1;
             this.selectedBlock = this.storyBlocks[this.selectedIndex];
+        }
+    }
+
+    save() {
+        for (var i = 0; i < this.storyBlocks.length; i++) {
+            this.storyBlockService.saveStoryBlock(this.storyBlocks[i]).subscribe();
         }
     }
 }

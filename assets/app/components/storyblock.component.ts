@@ -4,12 +4,16 @@ import {AnimationBuilder} from "angular2/src/animate/animation_builder";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockService} from "../services/storyblocks.service";
 import {Configuration} from "../config/configuration";
+import {StoryBlockType} from "../models/storyblock-type";
 
 @Component({
     selector: 'storyblock',
     template: `
-        <div class="index" (mousewheel)="zoom()" (DOMMouseScroll)="zoom()"><span>{{utilsService.getRomanNumeral(index + 1)}}</span></div>
+        <div class="index" ><span>{{utilsService.getRomanNumeral(storyBlockInfo.blockNumber + 1)}}</span></div>
         <div class="text-container">
+            <select [hidden]="!_exposed" [(ngModel)]="storyBlockInfo.type">
+                <option *ngFor="#storyBlockType of storyBlockTypes" value= {{storyBlockType.id}}>{{storyBlockType.name}}</option>
+            </select>
             <input class="title" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.title" placeholder="Insert a title" />
             <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..."></textarea>
             <div class="default-actions">
@@ -28,6 +32,8 @@ import {Configuration} from "../config/configuration";
 
 export class StoryBlockComponent implements OnInit {
     public storyBlockInfo:StoryBlock;
+    public storyBlockTypes:StoryBlockType[];
+
     public index;
     public _exposed = false;
     public _active = true;
@@ -63,6 +69,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     ngOnInit():any {
+        this.storyBlockTypes = this.storyBlockService.getStoryBlockTypes();
         this.changePositionOnZoom(1000);
     }
 
@@ -221,7 +228,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     edit(index, event) {
-        console.log('Saving temporary data ' + this.storyBlockInfo);
+        console.log('Saving temporary data ', this.storyBlockInfo);
         this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
         this.exposeEvent.emit(index);
         this.focus();
@@ -241,15 +248,14 @@ export class StoryBlockComponent implements OnInit {
     }
 
     save(index, event) {
-        console.log('Should save', index, event);
         this.storyBlockService.saveStoryBlock(this.storyBlockInfo).subscribe(
             data => {
                 this.storyBlockInfo = <StoryBlock>data;
-                console.log('Saving temporary data ' + this.storyBlockInfo);
+                console.log('Saving temporary data ', this.storyBlockInfo);
                 this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
             },
             () => {
-                console.log('Saved');
+                console.log('Saved ', this.storyBlockInfo);
             }
         );
     }
