@@ -40,3 +40,6 @@ npm install
 ```
 npm start
 ```
+
+The url of the server should be set under assets/app/config/configuration.ts
+Change it to point to the backend and deploy the public folder  wherever the front will be
