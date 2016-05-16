@@ -236,11 +236,13 @@ export class StoryBlockComponent implements OnInit {
     }
 
     save(index, event) {
+        console.log('I am about to save', this.storyBlockInfo);
 
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
             this.storyBlockService.saveStoryBlock(this.userId,this.storyBlockInfo).subscribe(
                 data => {
                     this.storyBlockInfo = <StoryBlock>data;
+                    console.log('Received ', data);
                     console.log('Saving temporary data ', data, this.storyBlockInfo);
                     this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
                 },

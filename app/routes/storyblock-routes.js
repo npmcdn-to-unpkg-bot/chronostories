@@ -55,7 +55,7 @@ router.put('/:userid/:blockid', function (req, res, next) {
             console.log(err);
         }
         console.log('Saving');
-        return res.json(storyBlock);
+        return res.json(data);
     });
 });
 
