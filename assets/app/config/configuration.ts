@@ -17,5 +17,5 @@ export class Configuration {
     // public apiBasePath = 'https://aa2016-chronostories.herokuapp.com';
     public apiBasePath = '';
     
-    public debugLevel = DEBUG_LEVEL.VERBOSE;
+    public debugLevel = DEBUG_LEVEL.INFO;
 }

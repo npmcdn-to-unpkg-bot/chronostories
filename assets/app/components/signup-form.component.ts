@@ -13,7 +13,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
         <div class="form-wrapper">
             <div class="flexbox flex-row">
                 <h1>Become a storyteller</h1>
-                <div><a class="close" (click)="close($event)"><i class="fa fa-times" aria-hidden="true"></i></a></div>
+                <div><a class="close" (click)="close($event)"><i class="fa fa-times" aria-hidden="true">X</i></a></div>
             </div>
             <form [ngFormModel]="form" (ngSubmit)="onSignUp($event)" novalidate>
               <div class="form-group">
@@ -65,7 +65,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             </form>
         </div>
     `,
-    providers: [AuthService, WebStorageService, LoggerService],
+    providers: [AuthService, WebStorageService],
     directives: [FORM_DIRECTIVES]
 })
 

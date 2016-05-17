@@ -1,0 +1,33 @@
+debug-console {
+  display: block;
+  padding: 10px 10px 10px 10px;
+  background-color: $light-pastel-green;
+  height: 200px;
+  overflow: hidden;
+  overflow-y: auto;
+  margin-top: 20px;
+
+  div {
+    font-size: 12px;
+    color: $black;
+  }
+
+  a {
+    cursor:pointer;
+
+    font-size: 10px;
+    color: $black;
+
+    &:hover {
+      color:$fern;
+    }
+
+    &.warning {
+      color: $punch;
+    }
+
+    &.error {
+      color: $kimberly;
+    }
+  }
+}

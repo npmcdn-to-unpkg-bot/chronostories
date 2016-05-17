@@ -1,32 +1,41 @@
-import {Injectable, forwardRef, Inject} from "angular2/core";
+import {Injectable, forwardRef, Inject, OnInit} from "angular2/core";
 import {Configuration} from "../config/configuration";
 import {Observable} from "rxjs/Observable";
+import {Observer} from "rxjs/Observer";
 
 declare var moment:any;
 
 @Injectable()
-export class LoggerService {
+export class LoggerService implements OnInit {
     private debugLevel;
+    private logStream$:Observer<Object>;
+    public log$:Observable<Object>;
 
     constructor(@Inject(forwardRef(() => Configuration)) private configuration:Configuration) {
         this.setDebugLevel(configuration.debugLevel || DEBUG_LEVEL.ERROR);
+
         var that = this;
+
         window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
             that.log(DEBUG_LEVEL.ERROR, 'onerror', errorMsg, url, lineNumber, column, errorObj);
             return true;
         };
     }
 
+    ngOnInit():any {
+    }
+
     setDebugLevel(debugLevel) {
         this.debugLevel = debugLevel;
     }
 
-    public log(level, functionName, message, ...args:any[]) {
+    public log(level, functionName, text, ...args:any[]) {
         if (!level || (level.value === undefined) || !level.name) {
             level = DEBUG_LEVEL.INFO;
         }
         if (level.value >= this.debugLevel.value) {
-            Array.prototype.unshift.call(args, '[' + moment().format("DD/MM/YY - HH:mm:ss.SSS") + '][' + level.name + '][' + functionName + '] ' + (message || ''));
+            var message:any = '[' + moment().format("DD/MM/YY - HH:mm:ss.SSS") + '][' + level.name + '][' + functionName + '] ' + (text || '');
+            Array.prototype.unshift.call(args, message);
             if (level.value === DEBUG_LEVEL.ERROR.value) {
                 console.debug.apply(console, args);
             }
@@ -36,7 +45,27 @@ export class LoggerService {
             else {
                 console.log.apply(console, args);
             }
+            if (!!this.log$ && this.logStream$) {
+                var logMessage = {
+                    time: moment().format("DD/MM/YY - HH:mm:ss.SSS"),
+                    level: level.name,
+                    functionName: functionName,
+                    message: text,
+                    data: args,
+                    pretty:''
+                };
+                logMessage.pretty = JSON.stringify(logMessage, null, 2);
+
+                this.logStream$.next(logMessage);
+            }
         }
+    }
+
+    getLogStream() {
+        if (!this.log$) {
+            this.log$ = new Observable<Object>(observer => this.logStream$ = observer).share();
+        }
+        return this.log$;
     }
 
     call(exception:any, stackTrace?:any, reason?:string):void {
@@ -55,7 +84,7 @@ export class LoggerService {
 export const DEBUG_LEVEL = {
     VERBOSE: {
         value: 0,
-        name: 'Verbose'
+        name: 'Log'
     },
     INFO: {
         value: 1,

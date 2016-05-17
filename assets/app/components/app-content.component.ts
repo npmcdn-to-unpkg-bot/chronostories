@@ -65,7 +65,8 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             (closeModal)="hideAccessForm()"
             (notify)="notify($event)"
             (authStatus)="authStatusChanged($event)"
-            ></auth-form>
+            >
+        </auth-form>
         <notification [ngClass]="{error: notification.type == 'error', success: notification.type == 'success'}"></notification>
     `,
     providers: [StoryBlockService, Configuration, AuthService, WebStorageService, LoggerService],
@@ -170,7 +171,7 @@ export class AppComponent implements OnInit {
                             this.recalculateStoryBlockNumbers();
                         },
                         err => console.error(err),
-                        () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
+                        () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
                     );
                 }
                 else{
@@ -179,7 +180,7 @@ export class AppComponent implements OnInit {
 
             },
             err => console.error(err),
-            () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
+            () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
         );
     }
 
@@ -201,7 +202,7 @@ export class AppComponent implements OnInit {
     }
 
     recalculateStoryBlockNumbers() {
-        this.logger.log(DEBUG_LEVEL.INFO, 'recalculateStoryBlockNumbers', 'Numbering before',this.storyBlocks);
+        this.logger.log(DEBUG_LEVEL.INFO, 'recalculateStoryBlockNumbers', 'Sorting blocks: before',this.storyBlocks);
         var currentTypes = {};
         for (var i = 0; i < this.storyBlockTypes.length; i++) {
             currentTypes[this.storyBlockTypes[i].id] = this.storyBlockTypes[i];
@@ -220,7 +221,7 @@ export class AppComponent implements OnInit {
                 }
             }
         }
-        this.logger.log(DEBUG_LEVEL.INFO, 'recalculateStoryBlockNumbers', 'Numbering after',this.storyBlocks);
+        this.logger.log(DEBUG_LEVEL.INFO, 'recalculateStoryBlockNumbers', 'Sorting blocks: after',this.storyBlocks);
     }
 
     logOut(){
@@ -282,7 +283,6 @@ export class AppComponent implements OnInit {
             top: 0
         };
 
-        //this.configuration.zoom.offset + ((this.configuration.zoom.step + Math.exp(this._zoomLevel * this.configuration.zoom.strength)) * this.storyBlockInfo.timePosition)
         var zoomConversionFactor = this.configuration.zoom.step + Math.exp(this.zoomLevel * this.configuration.zoom.strength);
 
         var positionAtZoom = ((event.pageY - this.configuration.zoom.offset) / zoomConversionFactor);
@@ -295,6 +295,7 @@ export class AppComponent implements OnInit {
             importance: 3,
             type: 'chapter'
         };
+
         this.maxIndex++;
 
         var tmpArrayPos = 0;

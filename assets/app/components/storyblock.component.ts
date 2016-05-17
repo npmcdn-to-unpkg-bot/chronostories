@@ -23,7 +23,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             </div>
         </div>
     `,
-    providers: [UtilsService, StoryBlockService, LoggerService],
+    providers: [UtilsService, StoryBlockService],
     inputs: ['storyBlockInfo', 'index', 'userId']
 })
 

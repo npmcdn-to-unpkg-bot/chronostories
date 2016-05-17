@@ -1,9 +1,9 @@
 import {Component, OnInit, Input, Output, EventEmitter} from "angular2/core";
 import {StoryBlockService} from "../services/storyblocks.service";
 import {UtilsService} from "../services/utils.service";
-import {StoryBlock} from "../models/storyblock";
 import {StoryBlockType} from "../models/storyblock-type";
 import {LoggerService} from "../services/logger.service";
+import {DebugConsoleComponent} from "./debug-console.component";
 
 @Component({
     selector:'sidebar',
@@ -42,8 +42,10 @@ import {LoggerService} from "../services/logger.service";
                 <span class="label">Last modified</span><span class="info">{{utilsService.getHumanDate(_storyBlock.lastModifiedAt)}}</span>
             </div>
         </div>
+        <debug-console *ngIf="isDebug()"></debug-console>
     `,
-    providers: [UtilsService, LoggerService],
+    providers: [UtilsService],
+    directives: [DebugConsoleComponent],
     inputs: ['storyBlock', 'storyBlocksLength']
 })
 export class SidebarComponent implements OnInit {
@@ -115,5 +117,9 @@ export class SidebarComponent implements OnInit {
             return false;
         }
         this.endDragging.emit(e);
+    }
+
+    isDebug(){
+        return (location.search.indexOf('?debug')>=0);
     }
 }
