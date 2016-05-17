@@ -22,7 +22,7 @@ export class LoggerService {
     }
 
     public log(level, functionName, message, ...args:any[]) {
-        if (!level || !level.value || !level.name) {
+        if (!level || (level.value === undefined) || !level.name) {
             level = DEBUG_LEVEL.INFO;
         }
         if (level.value >= this.debugLevel.value) {

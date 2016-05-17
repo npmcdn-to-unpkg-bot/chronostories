@@ -282,8 +282,11 @@ export class AppComponent implements OnInit {
             top: 0
         };
 
-        var zoomConversionFactor = this.configuration.zoom.step + (this.zoomLevel * this.configuration.zoom.strength);
+        //this.configuration.zoom.offset + ((this.configuration.zoom.step + Math.exp(this._zoomLevel * this.configuration.zoom.strength)) * this.storyBlockInfo.timePosition)
+        var zoomConversionFactor = this.configuration.zoom.step + Math.exp(this.zoomLevel * this.configuration.zoom.strength);
+
         var positionAtZoom = ((event.pageY - this.configuration.zoom.offset) / zoomConversionFactor);
+
         var newStoryBlock:StoryBlock = <StoryBlock> {
             blockId: this.maxIndex + 1,
             title: '',
