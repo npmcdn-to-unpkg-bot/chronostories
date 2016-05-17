@@ -12,6 +12,7 @@ import {StoryBlockType} from "../models/storyblock-type";
 import {AuthService} from "../services/auth.service";
 import {WebStorageService} from "../services/webstorage.service";
 import {AuthFormComponent} from "./auth-form.component";
+import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 
 
 @Component({
@@ -67,7 +68,7 @@ import {AuthFormComponent} from "./auth-form.component";
             ></auth-form>
         <notification [ngClass]="{error: notification.type == 'error', success: notification.type == 'success'}"></notification>
     `,
-    providers: [StoryBlockService, Configuration, AuthService, WebStorageService],
+    providers: [StoryBlockService, Configuration, AuthService, WebStorageService, LoggerService],
     directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, NotificationComponent, SidebarComponent, AuthFormComponent, NgClass]
 })
 
@@ -87,7 +88,12 @@ export class AppComponent implements OnInit {
     private maxIndex = 0;
     private notification;
 
-    constructor(private storyBlockService:StoryBlockService, private configuration:Configuration, private webStorageService:WebStorageService, private authService:AuthService) {
+    constructor(
+        private logger:LoggerService, 
+        private storyBlockService:StoryBlockService, 
+        private configuration:Configuration,
+        private webStorageService:WebStorageService,
+        private authService:AuthService) {
     }
 
     ngOnInit():any {
@@ -157,14 +163,14 @@ export class AppComponent implements OnInit {
                     }
                 }
                 if(!this.storyBlocks || this.storyBlocks.length==0){
-                    console.log('No blocks received!');
+                    this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'No blocks received!');
                     this.storyBlockService.generateTestData(this.userId).subscribe(
                         saveDefaultBlocks => {
                             this.storyBlocks = saveDefaultBlocks;
                             this.recalculateStoryBlockNumbers();
                         },
                         err => console.error(err),
-                        () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
+                        () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
                     );
                 }
                 else{
@@ -173,7 +179,7 @@ export class AppComponent implements OnInit {
 
             },
             err => console.error(err),
-            () => console.log('done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
+            () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'done, loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
         );
     }
 
@@ -184,7 +190,7 @@ export class AppComponent implements OnInit {
 
     showAccessForm() {
         this.toggleMenu(false);
-        console.log(this.authService.isLoggedIn());
+        this.logger.log(DEBUG_LEVEL.INFO, 'showAccessForm', this.authService.isLoggedIn());
         this.accessFormVisible = true;
         document.querySelector('body').classList.add('no-scroll');
     }
@@ -195,7 +201,7 @@ export class AppComponent implements OnInit {
     }
 
     recalculateStoryBlockNumbers() {
-        console.log('Numbering before',this.storyBlocks);
+        this.logger.log(DEBUG_LEVEL.INFO, 'recalculateStoryBlockNumbers', 'Numbering before',this.storyBlocks);
         var currentTypes = {};
         for (var i = 0; i < this.storyBlockTypes.length; i++) {
             currentTypes[this.storyBlockTypes[i].id] = this.storyBlockTypes[i];
@@ -214,7 +220,7 @@ export class AppComponent implements OnInit {
                 }
             }
         }
-        console.log('Numbering after',this.storyBlocks);
+        this.logger.log(DEBUG_LEVEL.INFO, 'recalculateStoryBlockNumbers', 'Numbering after',this.storyBlocks);
     }
 
     logOut(){
@@ -299,7 +305,7 @@ export class AppComponent implements OnInit {
 
         this.storyBlocks.splice(tmpArrayPos, 0, newStoryBlock);
 
-        console.log('Adding block index ' + tmpArrayPos);
+        this.logger.log(DEBUG_LEVEL.INFO,'addStoryBlock', 'Adding block index ' + tmpArrayPos);
         this.setExposed(tmpArrayPos);
 
 
@@ -308,7 +314,7 @@ export class AppComponent implements OnInit {
     }
 
     setExposed(index) {
-        console.log('Setting block '+index+' exposed');
+        this.logger.log(DEBUG_LEVEL.INFO, 'setExposed', 'Setting block '+index+' exposed');
         this.recalculateStoryBlockNumbers();
         this.exposedIndex = index;
         this.exposedStoryBlock = index >= 0 ? this.storyBlocks[index] : null;

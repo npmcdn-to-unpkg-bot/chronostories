@@ -5,12 +5,18 @@ import {Observable} from "rxjs/Observable";
 import {User} from "../models/user";
 import {WebStorageService} from "./webstorage.service";
 import {Configuration} from "../config/configuration";
+import {LoggerService, DEBUG_LEVEL} from "./logger.service";
 
 
 @Injectable()
 export class AuthService {
 
-    constructor(public http:Http, private webStorageService:WebStorageService, private configuration:Configuration) {
+    constructor(
+        private logger:LoggerService,
+        public http:Http,
+        private webStorageService:WebStorageService,
+        private configuration:Configuration
+    ) {
     }
 
     logout():boolean {
@@ -19,7 +25,7 @@ export class AuthService {
     }
 
     login(user:User):Observable<string> {
-        console.log('Creating temporary data');
+        this.logger.log(DEBUG_LEVEL.INFO, 'login', 'Creating temporary data');
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });
@@ -33,11 +39,12 @@ export class AuthService {
                 "email=" + user.email + "&" +
                 "password=" + user.password,
             options)
-            .map(res => res.text());
+            .map(res => res.text())
+            .catch(this.logger.errorCatcher());
     }
 
     register(user:User):Observable<string> {
-        console.log('Creating temporary data');
+        this.logger.log(DEBUG_LEVEL.INFO, 'register', 'Creating temporary data');
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });
@@ -49,7 +56,8 @@ export class AuthService {
                 "email=" + user.email + "&" +
                 "password=" + user.password,
             options)
-            .map(res => res.text());
+            .map(res => res.text())
+            .catch(this.logger.errorCatcher());
 
     }
 

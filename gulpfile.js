@@ -15,6 +15,7 @@ var imagemin = require('gulp-imagemin');
 var tsProject = typescript.createProject('tsconfig.json');
 
 var vendorJSFiles = [
+    'bower_components/moment/min/moment.min.js',
     'bower_components/pdfmake/build/pdfmake.min.js',
     'bower_components/pdfmake/build/vfs_fonts.js'
 ];

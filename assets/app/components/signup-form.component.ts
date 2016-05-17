@@ -5,6 +5,7 @@ import {FormBuilder, Validators, ControlGroup, FORM_DIRECTIVES} from "angular2/c
 import {emailValidator, matchingPasswords, emailRegexp} from '../services/validators.service';
 import {WebStorageService} from "../services/webstorage.service";
 import {Configuration} from "../config/configuration";
+import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 
 @Component({
     selector: 'sign-up-form',
@@ -64,7 +65,7 @@ import {Configuration} from "../config/configuration";
             </form>
         </div>
     `,
-    providers: [AuthService, WebStorageService],
+    providers: [AuthService, WebStorageService, LoggerService],
     directives: [FORM_DIRECTIVES]
 })
 
@@ -78,7 +79,13 @@ export class SignUpComponent {
     @Output() notify:EventEmitter<any> = new EventEmitter();
     @Output() authStatus:EventEmitter<any> = new EventEmitter();
 
-    constructor(private authService:AuthService, private builder:FormBuilder, private webStorageService:WebStorageService, private configuration:Configuration) {
+    constructor(
+        private logger:LoggerService,
+        private authService:AuthService,
+        private builder:FormBuilder,
+        private webStorageService:WebStorageService,
+        private configuration:Configuration
+    ) {
         this.user = new User();
         this.submitted = false;
         this.form = builder.group({
@@ -106,14 +113,14 @@ export class SignUpComponent {
                     this.webStorageService.put(this.configuration.token.name, data);
                 },
                 err => {
-                    console.error(err);
+                    this.logger.log(DEBUG_LEVEL.WARN, 'onSignUp','Server error', err);
                     this.notify.emit({
                         type: 'error',
                         message: 'The email is already taken'
                     });
                 },
                 () => {
-                    console.log('registered');
+                    this.logger.log(DEBUG_LEVEL.INFO, 'onSignUp', 'registered');
                     this.authStatus.emit('Login');
                     this.close('');
                 });

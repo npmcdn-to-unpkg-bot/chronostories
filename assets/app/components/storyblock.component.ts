@@ -4,6 +4,7 @@ import {AnimationBuilder} from "angular2/src/animate/animation_builder";
 import {StoryBlock} from "../models/storyblock";
 import {StoryBlockService} from "../services/storyblocks.service";
 import {Configuration} from "../config/configuration";
+import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 
 @Component({
     selector: 'storyblock',
@@ -22,8 +23,8 @@ import {Configuration} from "../config/configuration";
             </div>
         </div>
     `,
-    providers: [UtilsService, StoryBlockService],
-    inputs: ['storyBlockInfo', 'index' , 'userId']
+    providers: [UtilsService, StoryBlockService, LoggerService],
+    inputs: ['storyBlockInfo', 'index', 'userId']
 })
 
 export class StoryBlockComponent implements OnInit {
@@ -43,7 +44,12 @@ export class StoryBlockComponent implements OnInit {
     @Output() removeStoryBlockEvent:EventEmitter<any> = new EventEmitter();
     @Output() notify:EventEmitter<any> = new EventEmitter();
 
-    constructor(private _ab:AnimationBuilder, private _e:ElementRef, private utilsService:UtilsService, public storyBlockService:StoryBlockService, private configuration:Configuration) {
+    constructor(private logger:LoggerService,
+                private _ab:AnimationBuilder,
+                private _e:ElementRef,
+                private utilsService:UtilsService,
+                public storyBlockService:StoryBlockService,
+                private configuration:Configuration) {
     }
 
     @Input()
@@ -58,7 +64,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     @Input()
-    set exposedIndex(value:number){
+    set exposedIndex(value:number) {
         this._exposed = (value == this.index);
     }
 
@@ -74,7 +80,11 @@ export class StoryBlockComponent implements OnInit {
     }
 
     zoomChanged() {
-        // console.log('[StoryBlock #' + this.index + '] Zoom changed from ' + this._previousZoomLevel + ' to ' + this._zoomLevel);
+        this.logger.log(DEBUG_LEVEL.VERBOSE,'zoomChanged','', {
+            storyBlock: this.index,
+            previousZoom: this._previousZoomLevel,
+            currentZoom: this._zoomLevel
+        });
         if (this._zoomLevel < this.storyBlockInfo.importance) {
             this.fadeOut(1000);
             this._active = false;
@@ -86,7 +96,11 @@ export class StoryBlockComponent implements OnInit {
     }
 
     fadeIn(speed:number) {
-        // console.log('[StoryBlock #' + this.index + '] Fading in...');
+        this.logger.log(DEBUG_LEVEL.VERBOSE,'fadeIn','', {
+            storyBlock: this.index,
+            message:'Fading in'
+        });
+
         let animation = this._ab.css();
         var _self = this;
         var fromStyle = {};
@@ -111,12 +125,19 @@ export class StoryBlockComponent implements OnInit {
     }
 
     hasId() {
-        return !!((this.storyBlockInfo || {_id:undefined})._id);
+        return !!((this.storyBlockInfo || {_id: undefined})._id);
     }
 
     fadeOut(speed:number) {
         if (this._active) {
-            // console.log('[StoryBlock #' + this.index + '] Fading out...[' + this._zoomLevel + '<' + this.storyBlockInfo.importance + ']');
+            this.logger.log(DEBUG_LEVEL.VERBOSE,'fadeOut','', {
+                storyBlock: this.index,
+                previousZoom: this._previousZoomLevel,
+                currentZoom: this._zoomLevel,
+                importance: this.storyBlockInfo.importance,
+                message:'Fading out'
+            });
+
             let animation = this._ab.css();
             var _self = this;
             var fromStyle = {};
@@ -131,7 +152,11 @@ export class StoryBlockComponent implements OnInit {
                 .setToStyles(toStyle);
 
             if (!!_self._actionTimeout) {
-                console.log('[StoryBlock #' + _self.index + '] Animation removed');
+                this.logger.log(DEBUG_LEVEL.VERBOSE,'fadeOut','', {
+                    storyBlock: this.index,
+                    message:'Animation removed'
+                });
+
                 clearTimeout(_self._actionTimeout);
             }
 
@@ -152,14 +177,37 @@ export class StoryBlockComponent implements OnInit {
             top: this.configuration.zoom.offset + ((this.configuration.zoom.step + Math.exp(this._zoomLevel * this.configuration.zoom.strength)) * this.storyBlockInfo.timePosition) + 'px'
         };
 
-        // console.log('[StoryBlock #' + this.index + '] Changing position from ' + (fromStyle.top) + ' to ' + (toStyle.top) + ' ...');
+        this.logger.log(DEBUG_LEVEL.VERBOSE, 'changePositionOnZoom', '', {
+            storyBlock: this.index,
+            previousZoom: this._previousZoomLevel,
+            currentZoom: this._zoomLevel,
+            timePosition: this.storyBlockInfo.timePosition,
+            offset:this.configuration.zoom.offset,
+            step:this.configuration.zoom.step,
+            strength:this.configuration.zoom.strength,
+            fromPosition:fromStyle.top,
+            toPosition:toStyle.top,
+            message:'Changing position'
+        });
 
         if (_self._zoomLevel > _self.storyBlockInfo.importance) {
-            // console.log('[StoryBlock #' + this.index + '] ...and fading in [' + this._zoomLevel + '>' + this.storyBlockInfo.importance + ']');
+            this.logger.log(DEBUG_LEVEL.VERBOSE,'changePositionOnZoom','', {
+                storyBlock: this.index,
+                previousZoom: this._previousZoomLevel,
+                currentZoom: this._zoomLevel,
+                importance: this.storyBlockInfo.importance,
+                message:'Fading in'
+            });
             toStyle['opacity'] = 1;
         }
         else {
-            // console.log('[StoryBlock #' + this.index + '] ...and fading out');
+            this.logger.log(DEBUG_LEVEL.VERBOSE,'changePositionOnZoom','', {
+                storyBlock: this.index,
+                previousZoom: this._previousZoomLevel,
+                currentZoom: this._zoomLevel,
+                importance: this.storyBlockInfo.importance,
+                message:'Fading out'
+            });
             toStyle['opacity'] = 0;
         }
 
@@ -171,7 +219,10 @@ export class StoryBlockComponent implements OnInit {
             .setToStyles(toStyle);
 
         if (!!_self._actionTimeout) {
-            // console.log('[StoryBlock #' + this.index + '] Animation removed');
+            this.logger.log(DEBUG_LEVEL.VERBOSE,'changePositionOnZoom','', {
+                storyBlock: this.index,
+                message:'Animation removed'
+            });
             clearTimeout(_self._actionTimeout);
         }
 
@@ -206,26 +257,26 @@ export class StoryBlockComponent implements OnInit {
     }
 
     edit(index, event) {
-        console.log('Saving temporary data ', this.storyBlockInfo);
+        this.logger.log(DEBUG_LEVEL.INFO, 'edit', 'Saving temporary data ', this.storyBlockInfo);
         this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
         this.exposeEvent.emit(index);
         this.focus();
     }
 
     remove(index, event) {
-        this.storyBlockService.deleteStoryBlock(this.userId,this.storyBlockInfo).subscribe(
+        this.storyBlockService.deleteStoryBlock(this.userId, this.storyBlockInfo).subscribe(
             data => {
-                console.log(data);
+                this.logger.log(DEBUG_LEVEL.INFO, 'remove', 'Received data',  data);
             },
             error => {
-                console.log('Error while removing', this.storyBlockInfo, error);
+                this.logger.log(DEBUG_LEVEL.WARN, 'remove', 'Error while removing', this.storyBlockInfo, error);
                 this.notify.emit({
                     type: 'error',
                     message: 'Error. Please try again.'
                 });
             },
             () => {
-                console.log('Removing block index ' +this.index);
+                this.logger.log(DEBUG_LEVEL.INFO, 'remove', 'Removing block index ' + this.index);
                 this.notify.emit({
                     type: 'success',
                     message: 'Removed successfully.'
@@ -236,25 +287,25 @@ export class StoryBlockComponent implements OnInit {
     }
 
     save(index, event) {
-        console.log('I am about to save', this.storyBlockInfo);
+        this.logger.log(DEBUG_LEVEL.INFO, 'save', 'I am about to save', this.storyBlockInfo);
 
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
-            this.storyBlockService.saveStoryBlock(this.userId,this.storyBlockInfo).subscribe(
+            this.storyBlockService.saveStoryBlock(this.userId, this.storyBlockInfo).subscribe(
                 data => {
                     this.storyBlockInfo = <StoryBlock>data;
-                    console.log('Received ', data);
-                    console.log('Saving temporary data ', data, this.storyBlockInfo);
+                    this.logger.log(DEBUG_LEVEL.INFO, 'save', 'Received ', data);
+                    this.logger.log(DEBUG_LEVEL.INFO, 'save', 'Saving temporary data ', data, this.storyBlockInfo);
                     this.storyBlockLocalSave = <StoryBlock>JSON.parse(JSON.stringify(this.storyBlockInfo));
                 },
                 error => {
-                    console.log('Error while saving', this.storyBlockInfo, error);
+                    this.logger.log(DEBUG_LEVEL.WARN, 'save', 'Error while saving', this.storyBlockInfo, error);
                     this.notify.emit({
                         type: 'error',
                         message: 'Error. Please try again.'
                     });
                 },
                 () => {
-                    console.log('Saved ', this.storyBlockInfo);
+                    this.logger.log(DEBUG_LEVEL.INFO, 'save', 'Saved ', this.storyBlockInfo);
                     this.notify.emit({
                         type: 'success',
                         message: 'Saved successfully.'
@@ -270,7 +321,7 @@ export class StoryBlockComponent implements OnInit {
         this.exposeEvent.emit(-1);
 
         if (!this.storyBlockLocalSave) {
-            console.log('Removing block index ' +this.index);
+            this.logger.log(DEBUG_LEVEL.INFO, 'close','Removing block index ' + this.index);
             this.removeStoryBlockEvent.emit(this.index);
         }
     }

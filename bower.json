@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "dependencies": {
     "pdfmake": "~0.1.18",
-    "system.js" : "~0.19.27",
-    "angular2-build" : "2.0.0-alpha.34"
+    "system.js": "~0.19.27",
+    "angular2-build": "2.0.0-alpha.34",
+    "moment": "^2.13.0"
   }
 }

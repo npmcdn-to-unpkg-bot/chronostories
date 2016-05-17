@@ -9,6 +9,7 @@ import {STORYBLOCKS} from "../mock/mock-storyblocks";
 import {StoryBlockType} from "../models/storyblock-type";
 import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
 import {Configuration} from "../config/configuration";
+import {LoggerService, DEBUG_LEVEL} from "./logger.service";
 declare var pdfMake: any;
 
 @Injectable()
@@ -17,7 +18,11 @@ export class StoryBlockService {
     indexChange$: Observable<number>;
     private _observer: Observer<number>;
 
-    constructor(public http:Http, private configuration:Configuration) {
+    constructor(
+        private logger:LoggerService,
+        public http:Http, 
+        private configuration:Configuration
+    ) {
         this.indexChange$ = new Observable(observer =>
             this._observer = observer).share();
     }
@@ -31,7 +36,8 @@ export class StoryBlockService {
 
     getStoryBlocks(userId):Observable<StoryBlock[]> {
         return this.http.get(this.configuration.apiBasePath + '/storyblocks/'+userId)
-            .map(res => res.json());
+            .map(res => res.json())
+            .catch(this.logger.errorCatcher());
     }
 
     saveStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock> {
@@ -47,20 +53,23 @@ export class StoryBlockService {
             storyBlock.createdAt = storyBlock.createdAt || (new Date());
             storyBlock.lastModifiedAt = (new Date());
             return this.http.put(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
-                .map(res => res.json());
+                .map(res => res.json())
+                .catch(this.logger.errorCatcher());
         }
         else {
             storyBlock.createdAt = (new Date());
             storyBlock.lastModifiedAt = (new Date());
             return this.http.post(this.configuration.apiBasePath + '/storyblocks/'+userId +'/' , "data=" + JSON.stringify(storyBlock), options)
-                .map(res => res.json());
+                .map(res => res.json())
+                .catch(this.logger.errorCatcher());
         }
     }
 
     deleteStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock[]> {
         if (!!storyBlock._id) {
             return this.http.delete(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id)
-                .map(res => res.json());
+                .map(res => res.json())
+                .catch(this.logger.errorCatcher());
         }
         return null;
     }
@@ -74,7 +83,7 @@ export class StoryBlockService {
     }
 
     generateTestData(userId):Observable<StoryBlock[]> {
-        console.log('Creating temporary data for ' + userId);
+        this.logger.log(DEBUG_LEVEL.INFO, 'generateTestData', 'Creating temporary data for ' + userId);
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });
@@ -91,7 +100,9 @@ export class StoryBlockService {
             blocks[i].lastModifiedAt = (new Date());
         }
         
-        return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(blocks), options).map(res => res.json());
+        return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(blocks), options)
+            .map(res => res.json())
+            .catch(this.logger.errorCatcher());
     }
 
     downloadPdf(storyBlocks:StoryBlock[]) {
