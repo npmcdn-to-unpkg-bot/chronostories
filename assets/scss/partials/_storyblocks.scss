@@ -4,6 +4,11 @@
   padding-left: $timeline-left-padding;
   @include flexbox();
 
+  &::before, &::after {
+    pointer-events: none;
+    cursor: pointer;
+  }
+
   &:not(.exposed) {
     &.chapter {
       &::before, &::after {
@@ -74,6 +79,7 @@
     z-index: 1;
     max-width: 100%;
     min-width: 0;
+    cursor: pointer;
     @extend .slab;
     @include rounded(50%);
     @include flexbox();
@@ -106,8 +112,6 @@
       }
 
       &::after {
-        content: '';
-        position: absolute;
         width: 12px;
         height: 12px;
         top: ($storyblock-circle-size - 12px)/2;

@@ -5,12 +5,15 @@ import {StoryBlock} from "../models/storyblock";
 import {StoryBlockService} from "../services/storyblocks.service";
 import {Configuration} from "../config/configuration";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
+import {Collapse} from "../directives/collapse.directive";
 
 @Component({
     selector: 'storyblock',
     template: `
-        <div class="index"><span *ngIf="storyBlockInfo.type == 'chapter'">{{utilsService.getRomanNumeral(storyBlockInfo.blockNumber + 1)}}</span></div>
-        <div class="text-container">
+        <a class="index" (click)="swapCollapse()">
+            <span *ngIf="storyBlockInfo.type == 'chapter'">{{utilsService.getRomanNumeral(storyBlockInfo.blockNumber + 1)}}</span>
+        </a>
+        <div class="text-container" [collapse]="collapsed">
             <input class="title" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.title" placeholder="Insert a title" />
             <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..."></textarea>
             <div class="default-actions">
@@ -23,6 +26,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             </div>
         </div>
     `,
+    directives: [Collapse],
     providers: [UtilsService, StoryBlockService],
     inputs: ['storyBlockInfo', 'index', 'userId']
 })
@@ -38,6 +42,7 @@ export class StoryBlockComponent implements OnInit {
     private _zoomLevel = 10;
     private _previousZoomLevel = 10;
     private storyBlockLocalSave:StoryBlock;
+    public collapsed: boolean = false;
 
     @Output() zoomEvent:EventEmitter<any> = new EventEmitter();
     @Output() exposeEvent:EventEmitter<any> = new EventEmitter();
@@ -66,6 +71,10 @@ export class StoryBlockComponent implements OnInit {
     @Input()
     set exposedIndex(value:number) {
         this._exposed = (value == this.index);
+    }
+
+    swapCollapse(){
+        this.collapsed = !this.collapsed;
     }
 
     ngOnInit():any {

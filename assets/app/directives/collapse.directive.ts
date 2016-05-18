@@ -36,10 +36,10 @@ export class Collapse implements OnChanges {
     hide(): void {
         this._baseSequence
             .setFromStyles({
-                height: this._el.nativeElement.scrollHeight + 'px'
+                width: this._el.nativeElement.scrollWidth + 'px'
             })
             .setToStyles({
-                height: '0'
+                width: '0'
             });
 
         // a is the Animation instance running this animation.
@@ -62,10 +62,10 @@ export class Collapse implements OnChanges {
             .onComplete(() => {
                 let a = this._baseSequence //  2nd animation build
                     .setFromStyles({
-                        height: '0'
+                        width: '0'
                     })
                     .setToStyles({
-                        height: this._el.nativeElement.scrollHeight + 'px'
+                        width: this._el.nativeElement.scrollWidth + 'px'
                     })
                     .start(this._el.nativeElement); // 2nd animation start
 
