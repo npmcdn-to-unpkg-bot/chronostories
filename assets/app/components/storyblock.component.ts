@@ -6,16 +6,17 @@ import {StoryBlockService} from "../services/storyblocks.service";
 import {Configuration} from "../config/configuration";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 import {Collapse} from "../directives/collapse.directive";
+import {Disappear} from "../directives/disappear.directive";
 
 @Component({
     selector: 'storyblock',
     template: `
-        <a class="index" (click)="swapCollapse()">
+        <a class="index" (click)="swapCollapse()" (click)="swapDisappear()">
             <span *ngIf="storyBlockInfo.type == 'chapter'">{{utilsService.getRomanNumeral(storyBlockInfo.blockNumber + 1)}}</span>
         </a>
         <div class="text-container" [collapse]="collapsed">
-            <input class="title" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.title" placeholder="Insert a title" />
-            <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..."></textarea>
+            <input class="title" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.title" placeholder="Insert a title"  [disappear]="disappeared"/>
+            <textarea class="description" [attr.readonly]="_exposed ? null : true" [(ngModel)]="storyBlockInfo.description" placeholder="Start writing your story here..." [disappear]="disappeared"></textarea>
             <div class="default-actions">
                 <a (click)="edit(index, $event)" class="button inline-button primary">Edit</a>
                 <a (click)="remove(index, $event)" [ngClass]="{disabled:!hasId()}" class="button inline-button alert">Remove</a>
@@ -26,7 +27,7 @@ import {Collapse} from "../directives/collapse.directive";
             </div>
         </div>
     `,
-    directives: [Collapse],
+    directives: [Collapse, Disappear],
     providers: [UtilsService, StoryBlockService],
     inputs: ['storyBlockInfo', 'index', 'userId']
 })
@@ -43,6 +44,7 @@ export class StoryBlockComponent implements OnInit {
     private _previousZoomLevel = 10;
     private storyBlockLocalSave:StoryBlock;
     public collapsed: boolean = false;
+    public disappeared: boolean = false;
 
     @Output() zoomEvent:EventEmitter<any> = new EventEmitter();
     @Output() exposeEvent:EventEmitter<any> = new EventEmitter();
@@ -75,6 +77,10 @@ export class StoryBlockComponent implements OnInit {
 
     swapCollapse(){
         this.collapsed = !this.collapsed;
+    }
+
+    swapDisappear(){
+        this.disappeared = !this.disappeared;
     }
 
     ngOnInit():any {
