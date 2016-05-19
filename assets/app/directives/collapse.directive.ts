@@ -25,51 +25,43 @@ export class Collapse implements OnChanges {
         }
     }
 
-    private get _baseSequence(): CssAnimationBuilder {
-        return this._animation
-            .setDuration(250) // the transition duration
-            .removeClass('collapse') // remove a class before the transition start
-            .removeClass('in')
-            .addAnimationClass('collapsing'); // add a temp class for the transition period
-    }
-
     hide(): void {
-        this._baseSequence
+        let animation = this._animation
+            .setDuration(350)
             .setFromStyles({
-                width: this._el.nativeElement.scrollWidth + 'px'
+                'flex-grow': 1,
+                'opacity' : 1,
+                'transition-timing-function': 'cubic-bezier(0.575, 0.255, 0.440, 0.985);'
             })
             .setToStyles({
-                width: '0'
+                'flex-grow': 0,
+                'opacity' : 0
             });
 
         // a is the Animation instance running this animation.
-        let a = this._animation.start(this._el.nativeElement);
+        let a = animation
+            .start(this._el.nativeElement);
         a.onComplete(() => {
-            a.removeClasses(['in']); // rapid change will leave 'in'
-            a.addClasses(['collapse'])
         });
     }
 
     show(): void {
-        this._animation // 1st animation build
-            .setDuration(0)
-            .addClass('collapse')
-            .addClass('in')
+        let animation = this._animation
+            .setDuration(350)
             .setFromStyles({
-                overflow: 'hidden'
+                'flex-grow': 0,
+                'opacity' : 0,
+                'transition-timing-function': 'cubic-bezier(0.575, 0.255, 0.440, 0.985);'
             })
-            .start(this._el.nativeElement) // 1st animation start
-            .onComplete(() => {
-                let a = this._baseSequence //  2nd animation build
-                    .setFromStyles({
-                        width: '0'
-                    })
-                    .setToStyles({
-                        width: this._el.nativeElement.scrollWidth + 'px'
-                    })
-                    .start(this._el.nativeElement); // 2nd animation start
-
-                a.onComplete(() =>  a.addClasses(['collapse', 'in']) );
+            .setToStyles({
+                'flex-grow': 1,
+                'opacity' : 1
             });
-    }
+
+        // a is the Animation instance running this animation.
+        let a = animation
+            .start(this._el.nativeElement);
+        a.onComplete(() => {
+        });
+   }
 }

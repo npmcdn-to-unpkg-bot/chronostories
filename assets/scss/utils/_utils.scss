@@ -51,7 +51,6 @@
 
 .collapsing {
   position: relative;
-  width: 0;
   overflow: hidden;
   -webkit-transition-timing-function: cubic-bezier(0.575, 0.255, 0.440, 0.985);;
   -o-transition-timing-function: cubic-bezier(0.575, 0.255, 0.440, 0.985);;
@@ -59,7 +58,7 @@
   -webkit-transition-duration: .35s;
   -o-transition-duration: .35s;
   transition-duration: .35s;
-  -webkit-transition-property: width, visibility;
-  -o-transition-property: width, visibility;
-  transition-property: width, visibility;
+  -webkit-transition-property: flex-grow, visibility;
+  -o-transition-property: flex-grow, visibility;
+  transition-property: flex-grow, visibility;
 }
