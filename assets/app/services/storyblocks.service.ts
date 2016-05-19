@@ -1,4 +1,4 @@
-import {Injectable} from "angular2/core";
+import {Injectable, Output, EventEmitter} from "angular2/core";
 import {Http, Headers, RequestOptions} from 'angular2/http';
 import {StoryBlock} from "../models/storyblock";
 import 'rxjs/Rx';
@@ -10,32 +10,33 @@ import {StoryBlockType} from "../models/storyblock-type";
 import {STORYBLOCK_TYPES} from "../mock/mock-storyblock-types";
 import {Configuration} from "../config/configuration";
 import {LoggerService, DEBUG_LEVEL} from "./logger.service";
-declare var pdfMake: any;
+
+declare var pdfMake:any;
 
 @Injectable()
 export class StoryBlockService {
     private _exposedIndex = -1;
-    indexChange$: Observable<number>;
-    private _observer: Observer<number>;
+    indexChange$:Observable<number>;
+    @Output() public addRequest$:EventEmitter<any> = new EventEmitter();
+    private _observer:Observer<number>;
 
-    constructor(
-        private logger:LoggerService,
-        public http:Http, 
-        private configuration:Configuration
-    ) {
-        this.indexChange$ = new Observable(observer =>
-            this._observer = observer).share();
+    constructor(private logger:LoggerService,
+                public http:Http,
+                private configuration:Configuration) {
+        this.indexChange$ = new Observable(observer => this._observer = observer).share();
     }
+
     changeExposedIndex(index) {
         this._exposedIndex = index;
         this._observer.next(index);
     }
+
     getExposedIndex() {
         return this._exposedIndex;
     }
 
     getStoryBlocks(userId):Observable<StoryBlock[]> {
-        return this.http.get(this.configuration.apiBasePath + '/storyblocks/'+userId)
+        return this.http.get(this.configuration.apiBasePath + '/storyblocks/' + userId)
             .map(res => res.json())
             .catch(this.logger.errorCatcher());
     }
@@ -59,7 +60,7 @@ export class StoryBlockService {
         else {
             storyBlock.createdAt = (new Date());
             storyBlock.lastModifiedAt = (new Date());
-            return this.http.post(this.configuration.apiBasePath + '/storyblocks/'+userId +'/' , "data=" + JSON.stringify(storyBlock), options)
+            return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
@@ -94,12 +95,12 @@ export class StoryBlockService {
 
         var blocks:StoryBlock[] = STORYBLOCKS;
 
-        for(var i=0; i<blocks.length; i++){
+        for (var i = 0; i < blocks.length; i++) {
             blocks[i].userId = userId;
             blocks[i].createdAt = (new Date());
             blocks[i].lastModifiedAt = (new Date());
         }
-        
+
         return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(blocks), options)
             .map(res => res.json())
             .catch(this.logger.errorCatcher());

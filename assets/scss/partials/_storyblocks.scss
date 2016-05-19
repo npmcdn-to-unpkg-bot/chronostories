@@ -1,3 +1,12 @@
+.story-blocks {
+  storyblock {
+    pointer-events: none;
+    * {
+      pointer-events: auto;
+    }
+  }
+}
+
 .story-block {
   width: 100%;
   position: absolute;
@@ -194,4 +203,5 @@
       display: none;
     }
   }
+
 }

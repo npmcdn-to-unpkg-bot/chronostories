@@ -28,7 +28,7 @@ import {Disappear} from "../directives/disappear.directive";
         </div>
     `,
     directives: [Collapse, Disappear],
-    providers: [UtilsService, StoryBlockService],
+    providers: [UtilsService],
     inputs: ['storyBlockInfo', 'index', 'userId']
 })
 
@@ -56,7 +56,9 @@ export class StoryBlockComponent implements OnInit {
                 private _e:ElementRef,
                 private utilsService:UtilsService,
                 public storyBlockService:StoryBlockService,
-                private configuration:Configuration) {
+                private configuration:Configuration
+        ) {
+
     }
 
     @Input()

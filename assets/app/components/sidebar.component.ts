@@ -116,7 +116,7 @@ export class SidebarComponent implements OnInit {
         if(window.innerWidth >= 768 && e.x > window.innerWidth - asideWidth - iconWidth){
             return false;
         }
-        this.endDragging.emit(e);
+        this._storyBlockService.addRequest$.emit(e);
     }
 
     isDebug(){

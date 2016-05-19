@@ -65,7 +65,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             </form>
         </div>
     `,
-    providers: [AuthService, WebStorageService],
+    providers: [],
     directives: [FORM_DIRECTIVES]
 })
 
@@ -121,7 +121,8 @@ export class SignUpComponent {
                 },
                 () => {
                     this.logger.log(DEBUG_LEVEL.INFO, 'onSignUp', 'registered');
-                    this.authStatus.emit('Login');
+                    this.authStatus.emit('Registered');
+                    this.authService.authStatusChange$.emit('Registered');
                     this.close('');
                 });
         }

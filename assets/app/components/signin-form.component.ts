@@ -2,7 +2,7 @@ import {Component, EventEmitter, Output} from "angular2/core";
 import {User} from "../models/user";
 import {AuthService} from "../services/auth.service";
 import {FormBuilder, Validators, ControlGroup, FORM_DIRECTIVES} from "angular2/common";
-import {emailValidator, matchingPasswords, emailRegexp} from '../services/validators.service';
+import {emailRegexp} from '../services/validators.service';
 import {WebStorageService} from "../services/webstorage.service";
 import {Configuration} from "../config/configuration";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
@@ -43,7 +43,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             </form>
         </div>
     `,
-    providers: [AuthService, WebStorageService],
+    providers: [],
     directives: [FORM_DIRECTIVES]
 })
 
@@ -97,6 +97,7 @@ export class SignInComponent {
                 () => {
                     this.logger.log(DEBUG_LEVEL.INFO, 'onSignIn', 'logged in');
                     this.authStatus.emit('Login');
+                    this.authService.authStatusChange$.emit('Login');
                     this.close('');
                 });
         }

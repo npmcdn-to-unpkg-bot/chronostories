@@ -1,4 +1,4 @@
-import {Injectable} from "angular2/core";
+import {Injectable, forwardRef, Inject, EventEmitter, Output} from "angular2/core";
 import {Http, Headers, RequestOptions} from 'angular2/http';
 import {JwtToken} from "../models/jwtToken";
 import {Observable} from "rxjs/Observable";
@@ -10,17 +10,17 @@ import {LoggerService, DEBUG_LEVEL} from "./logger.service";
 
 @Injectable()
 export class AuthService {
+    @Output() public authStatusChange$:EventEmitter<any> = new EventEmitter();
 
-    constructor(
-        private logger:LoggerService,
-        public http:Http,
-        private webStorageService:WebStorageService,
-        private configuration:Configuration
-    ) {
+    constructor(@Inject(forwardRef(() => LoggerService)) private logger:LoggerService,
+                @Inject(forwardRef(() => Http)) public http:Http,
+                @Inject(forwardRef(() => WebStorageService)) private webStorageService:WebStorageService,
+                @Inject(forwardRef(() => Configuration)) private configuration:Configuration) {
     }
 
     logout():boolean {
         this.webStorageService.remove(this.configuration.token.name);
+        this.authStatusChange$.emit('Logout');
         return true;
     }
 
@@ -39,7 +39,9 @@ export class AuthService {
                 "email=" + user.email + "&" +
                 "password=" + user.password,
             options)
-            .map(res => res.text())
+            .map(res => 
+                res.text()
+            )
             .catch(this.logger.errorCatcher());
     }
 
@@ -56,7 +58,9 @@ export class AuthService {
                 "email=" + user.email + "&" +
                 "password=" + user.password,
             options)
-            .map(res => res.text())
+            .map(res => 
+                res.text()
+            )
             .catch(this.logger.errorCatcher());
 
     }

@@ -20,7 +20,7 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
             </div>
         </div>
     `,
-    providers: [AuthService, WebStorageService],
+    providers: [],
     directives: [FORM_DIRECTIVES]
 })
 
