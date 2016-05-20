@@ -21,12 +21,12 @@ export class AppContentComponent implements OnInit {
     }
 
     ngOnInit():any {
-        this.newsService.getNews().subscribe(data=> {
-            this.logger.log(DEBUG_LEVEL.INFO, 'getNews', data);
-            console.log(data)
-        },
-        err => this.logger.log(DEBUG_LEVEL.ERROR, 'getNews', 'Error',err),
-            () => this.logger.log(DEBUG_LEVEL.INFO, 'getNews', 'Get news completed')
-    )
+    //     this.newsService.getNews().subscribe(data=> {
+    //         this.logger.log(DEBUG_LEVEL.INFO, 'getNews', data);
+    //         console.log(data)
+    //     },
+    //     err => this.logger.log(DEBUG_LEVEL.ERROR, 'getNews', 'Error',err),
+    //         () => this.logger.log(DEBUG_LEVEL.INFO, 'getNews', 'Get news completed')
+    // )
     }
 }

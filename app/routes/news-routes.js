@@ -4,14 +4,12 @@ var NewsModel = require('../models/news');
 
 router.get('/', function (req, res, next) {
     console.log('news.get');
-
-    res.json({test:process.env.user});
-
+    
     NewsModel.find({}, function (err, storyBlock) {
         if (err) {
             console.log(err);
         }
-        // return res.json(storyBlock);
+        return res.json(storyBlock);
     });
 });
 
