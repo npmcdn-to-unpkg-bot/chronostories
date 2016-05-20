@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var jwt = require('express-jwt');
-var user = require('../models/user');
 
 
 var auth = jwt({

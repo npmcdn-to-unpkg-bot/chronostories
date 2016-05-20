@@ -36,7 +36,7 @@ export class StoryBlockService {
     }
 
     getStoryBlocks(userId):Observable<StoryBlock[]> {
-        return this.http.get(this.configuration.apiBasePath + '/storyblocks/' + userId)
+        return this.http.get(this.configuration.apiBasePath + '/story/' + userId)
             .map(res => res.json())
             .catch(this.logger.errorCatcher());
     }
@@ -53,14 +53,14 @@ export class StoryBlockService {
         if (!!storyBlock._id) {
             storyBlock.createdAt = storyBlock.createdAt || (new Date());
             storyBlock.lastModifiedAt = (new Date());
-            return this.http.put(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
+            return this.http.put(this.configuration.apiBasePath + '/story/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
         else {
             storyBlock.createdAt = (new Date());
             storyBlock.lastModifiedAt = (new Date());
-            return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(storyBlock), options)
+            return this.http.post(this.configuration.apiBasePath + '/story/' + userId + '/', "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
@@ -68,7 +68,7 @@ export class StoryBlockService {
 
     deleteStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock[]> {
         if (!!storyBlock._id) {
-            return this.http.delete(this.configuration.apiBasePath + '/storyblocks/' + userId + '/' + storyBlock._id)
+            return this.http.delete(this.configuration.apiBasePath + '/story/' + userId + '/' + storyBlock._id)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
@@ -101,7 +101,7 @@ export class StoryBlockService {
             blocks[i].lastModifiedAt = (new Date());
         }
 
-        return this.http.post(this.configuration.apiBasePath + '/storyblocks/' + userId + '/', "data=" + JSON.stringify(blocks), options)
+        return this.http.post(this.configuration.apiBasePath + '/story/' + userId + '/', "data=" + JSON.stringify(blocks), options)
             .map(res => res.json())
             .catch(this.logger.errorCatcher());
     }

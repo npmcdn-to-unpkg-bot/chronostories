@@ -9,6 +9,7 @@ var database = require('./app/config/database');
 var appRoutes = require('./app/routes/main-routes');
 var storyBlocksRouter = require('./app/routes/storyblock-routes');
 var authRoutes = require('./app/routes/auth-routes');
+var newsRoutes = require('./app/routes/news-routes');
 var app = express();
 var passport = require('passport');
 require('./app/config/passport');
@@ -55,8 +56,9 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', appRoutes);
-app.use('/storyblocks', storyBlocksRouter);
-app.use('/auth', authRoutes);
+app.use('/api/story', storyBlocksRouter);
+app.use('/api/auth', authRoutes);
+app.use('/api/news', newsRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

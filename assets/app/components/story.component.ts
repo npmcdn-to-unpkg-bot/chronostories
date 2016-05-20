@@ -76,7 +76,7 @@ export class StoryComponent implements OnInit {
                 private configuration:Configuration,
                 private webStorageService:WebStorageService,
                 private authService:AuthService) {
-        
+
         authService.authStatusChange$.subscribe(event => this.authStatusChanged(event));
         storyBlockService.addRequest$.subscribe(event => this.addStoryBlock(event));
     }
