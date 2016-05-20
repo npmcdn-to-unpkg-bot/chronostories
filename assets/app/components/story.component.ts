@@ -146,7 +146,7 @@ export class StoryComponent implements OnInit {
                             this.recalculateStoryBlockNumbers();
                             this.storyBlockList.emit(this.storyBlocks);
                         },
-                        err => console.error(err),
+                        err => this.logger.log(DEBUG_LEVEL.ERROR, 'getStoryBlocks', 'Error',err),
                         () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' default blocks', this.storyBlocks)
                     );
                 }

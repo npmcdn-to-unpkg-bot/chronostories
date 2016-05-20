@@ -1,6 +1,7 @@
 import {Component, OnInit} from 'angular2/core';
 import {StoryBoardComponent} from "./story-board.component";
 import {NewsService} from "../services/news.service";
+import {DEBUG_LEVEL, LoggerService} from "../services/logger.service";
 
 
 @Component({
@@ -14,11 +15,18 @@ import {NewsService} from "../services/news.service";
 
 export class AppContentComponent implements OnInit {
     constructor(
-        private newsService:NewsService
-    ){
+        private newsService:NewsService,
+        private logger:LoggerService
+    ) {
     }
-    
+
     ngOnInit():any {
-        this.newsService.getNews().subscribe(data=>{console.log(data)})
+        this.newsService.getNews().subscribe(data=> {
+            this.logger.log(DEBUG_LEVEL.INFO, 'getNews', data);
+            console.log(data)
+        },
+        err => this.logger.log(DEBUG_LEVEL.ERROR, 'getNews', 'Error',err),
+            () => this.logger.log(DEBUG_LEVEL.INFO, 'getNews', 'Get news completed')
+    )
     }
 }
