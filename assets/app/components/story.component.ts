@@ -144,19 +144,20 @@ export class StoryComponent implements OnInit {
                         saveDefaultBlocks => {
                             this.storyBlocks = saveDefaultBlocks;
                             this.recalculateStoryBlockNumbers();
+                            this.storyBlockList.emit(this.storyBlocks);
                         },
                         err => console.error(err),
-                        () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
+                        () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' default blocks', this.storyBlocks)
                     );
                 }
                 else {
+                    this.storyBlockList.emit(this.storyBlocks);
                     this.recalculateStoryBlockNumbers();
                 }
 
             },
             err => console.error(err),
             () => {
-                this.storyBlockList.emit(this.storyBlocks);
                 this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
             }
         );
@@ -273,6 +274,7 @@ export class StoryComponent implements OnInit {
 
         event.preventDefault();
         event.stopPropagation();
+        this.storyBlockList.emit(this.storyBlocks);
     }
 
     setExposed(index) {

@@ -8,6 +8,7 @@ import {WebStorageService} from "../services/webstorage.service";
 import {AuthFormComponent} from "./auth-form.component";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 import {StoryComponent} from "./story.component";
+import {StoryBlockService} from "../services/storyblocks.service";
 
 
 @Component({
@@ -15,9 +16,9 @@ import {StoryComponent} from "./story.component";
     template: `
         <story 
             [userId]="userId"
-            (exposeStoryblock)="setExposed(event)"
+            (exposeStoryblock)="setExposed($event)"
             (notify)="notify($event)"
-            (storyBlockList)="setStoryBlocks(event)"
+            (storyBlockList)="updateStoryBlocks($event)"
         ></story>
         <aside [ngClass]="{visible: menuVisible}">
             <sidebar
@@ -56,6 +57,7 @@ export class AppComponent implements OnInit {
         private logger:LoggerService, 
         private configuration:Configuration,
         private webStorageService:WebStorageService,
+        private storyBlockService:StoryBlockService,
         private authService:AuthService) {
 
         authService.authStatusChange$.subscribe(event => this.authStatusChanged(event))
@@ -75,7 +77,8 @@ export class AppComponent implements OnInit {
         this.exposedStoryBlock = event;
     }
 
-    setStoryBlocks(event){
+    updateStoryBlocks(event){
+        this.logger.log(DEBUG_LEVEL.INFO, 'updateStoryBlocks', 'Storyblocks updated:', (event || []));
         this.storyBlocks = event || [];
     }
 
@@ -134,7 +137,7 @@ export class AppComponent implements OnInit {
     }
 
     downloadPdf(){
-        // this.storyBlockService.downloadPdf(this.storyBlocks);
+        this.storyBlockService.downloadPdf(this.storyBlocks);
     }
 
     toggleMenu(visibility){
