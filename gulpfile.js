@@ -48,7 +48,10 @@ gulp.task('build-vendor-js', function () {
 });
 
 gulp.task('build-img', function () {
-    return gulp.src(assetsDev + 'img/**/*')
+    return gulp.src([
+        assetsDev + 'img/**/*.png',
+        assetsDev + 'img/**/*.gif'
+    ])
         .pipe(imagemin({
             progressive: true
         }))

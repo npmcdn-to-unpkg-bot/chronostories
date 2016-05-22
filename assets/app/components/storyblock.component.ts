@@ -7,6 +7,7 @@ import {Configuration} from "../config/configuration";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 import {Collapse} from "../directives/collapse.directive";
 import {Disappear} from "../directives/disappear.directive";
+import {Story} from "../models/story";
 
 @Component({
     selector: 'storyblock',
@@ -29,12 +30,13 @@ import {Disappear} from "../directives/disappear.directive";
     `,
     directives: [Collapse, Disappear],
     providers: [UtilsService],
-    inputs: ['storyBlockInfo', 'index', 'userId']
+    inputs: ['story','storyBlockInfo', 'index', 'userId']
 })
 
 export class StoryBlockComponent implements OnInit {
     public storyBlockInfo:StoryBlock;
     private userId;
+    private story:Story;
     public index;
     public _exposed = false;
     public _active = true;
@@ -50,6 +52,8 @@ export class StoryBlockComponent implements OnInit {
     @Output() exposeEvent:EventEmitter<any> = new EventEmitter();
     @Output() removeStoryBlockEvent:EventEmitter<any> = new EventEmitter();
     @Output() notify:EventEmitter<any> = new EventEmitter();
+    @Output() modified:EventEmitter<any> = new EventEmitter();
+    @Output() loaded:EventEmitter<any> = new EventEmitter();
 
     constructor(private logger:LoggerService,
                 private _ab:AnimationBuilder,
@@ -59,6 +63,12 @@ export class StoryBlockComponent implements OnInit {
                 private configuration:Configuration
         ) {
 
+    }
+
+    ngOnInit():any {
+        this.changePositionOnZoom(1000);
+        this.storyBlockInfo.loaded=true;
+        this.loaded.emit(this.storyBlockInfo);
     }
 
     @Input()
@@ -83,10 +93,6 @@ export class StoryBlockComponent implements OnInit {
 
     swapDisappear(){
         this.disappeared = !this.disappeared;
-    }
-
-    ngOnInit():any {
-        this.changePositionOnZoom(1000);
     }
 
     zoom(e) {
@@ -281,7 +287,7 @@ export class StoryBlockComponent implements OnInit {
     }
 
     remove(index, event) {
-        this.storyBlockService.deleteStoryBlock(this.userId, this.storyBlockInfo).subscribe(
+        this.storyBlockService.deleteStoryBlock(this.userId,this.story._id, this.storyBlockInfo).subscribe(
             data => {
                 this.logger.log(DEBUG_LEVEL.INFO, 'remove', 'Received data',  data);
             },
@@ -299,6 +305,7 @@ export class StoryBlockComponent implements OnInit {
                     message: 'Removed successfully.'
                 });
                 this.removeStoryBlockEvent.emit(this.index);
+                this.modified.emit(this.storyBlockInfo);
             }
         );
     }
@@ -307,7 +314,7 @@ export class StoryBlockComponent implements OnInit {
         this.logger.log(DEBUG_LEVEL.INFO, 'save', 'I am about to save', this.storyBlockInfo);
 
         if (!(this.storyBlockInfo.title == '' && this.storyBlockInfo.description == '')) {
-            this.storyBlockService.saveStoryBlock(this.userId, this.storyBlockInfo).subscribe(
+            this.storyBlockService.saveStoryBlock(this.userId, this.story._id, this.storyBlockInfo).subscribe(
                 data => {
                     this.storyBlockInfo = <StoryBlock>data;
                     this.logger.log(DEBUG_LEVEL.INFO, 'save', 'Received ', data);
@@ -327,6 +334,8 @@ export class StoryBlockComponent implements OnInit {
                         type: 'success',
                         message: 'Saved successfully.'
                     });
+                    this.modified.emit(this.storyBlockInfo);
+                    
                 }
             );
         } else {

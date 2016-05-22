@@ -8,6 +8,8 @@ export interface StoryBlock {
     blockNumber:number,
     type:string,
     userId:string,
+    storyId:string,
     createdAt:any,
-    lastModifiedAt:any
+    lastModifiedAt:any,
+    loaded:boolean
 }

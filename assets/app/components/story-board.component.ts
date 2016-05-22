@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from 'angular2/core';
+import {Component, OnInit, ViewChild, EventEmitter, Output} from 'angular2/core';
 import {NgClass} from 'angular2/common';
 import {NotificationComponent} from "./notification.component";
 import {SidebarComponent} from "./sidebar.component";
@@ -9,16 +9,26 @@ import {AuthFormComponent} from "./auth-form.component";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
 import {StoryComponent} from "./story.component";
 import {StoryBlockService} from "../services/storyblocks.service";
+import {StoryListComponent} from "./story-list.component";
+import {Story} from "../models/story";
 
 @Component({
     selector: 'story-board',
     template: `
         <story 
+            [hidden]="!showStory"
             [userId]="userId"
             (exposeStoryblock)="setExposed($event)"
             (notify)="notify($event)"
+            (loaded)="hasLoaded($event)"
             (storyBlockList)="updateStoryBlocks($event)"
+            [story]="story"
         ></story>
+        <story-list
+            [hidden]="showStory"
+            [userId]="userId"
+            (loadStory)="loadStory($event)"
+        ></story-list>
         <aside [ngClass]="{visible: menuVisible}">
             <sidebar
             (startDragging)="toggleMenu(false)"
@@ -39,7 +49,7 @@ import {StoryBlockService} from "../services/storyblocks.service";
         <notification [ngClass]="{error: notification.type == 'error', success: notification.type == 'success'}"></notification>
     `,
     providers: [],
-    directives: [StoryComponent, NotificationComponent, SidebarComponent, AuthFormComponent, NgClass]
+    directives: [StoryComponent, NotificationComponent, SidebarComponent, AuthFormComponent, NgClass, StoryListComponent]
 })
 
 export class StoryBoardComponent implements OnInit {
@@ -50,7 +60,10 @@ export class StoryBoardComponent implements OnInit {
     public accessFormVisible;
     private notification;
     private exposedStoryBlock;
+    private story:Story;
     private storyBlocks = [];
+    @Output() loaded:EventEmitter<any> = new EventEmitter();
+    private showStory=false;
 
     constructor(
         private logger:LoggerService, 
@@ -80,6 +93,12 @@ export class StoryBoardComponent implements OnInit {
         this.logger.log(DEBUG_LEVEL.INFO, 'updateStoryBlocks', 'Storyblocks updated:', (event || []));
         this.storyBlocks = event || [];
     }
+
+    loadStory(story){
+        this.story = <Story>story;
+        this.showStory=true;
+    }
+
 
     authUser(){
         if (this.authService.isLoggedIn()) {
@@ -125,6 +144,10 @@ export class StoryBoardComponent implements OnInit {
 
     isLoggedIn(){
         return this.authService.isLoggedIn();
+    }
+    
+    hasLoaded(event){
+        this.loaded.emit(event);
     }
 
     notify(notification){

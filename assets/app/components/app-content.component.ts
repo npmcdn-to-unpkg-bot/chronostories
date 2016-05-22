@@ -2,18 +2,25 @@ import {Component, OnInit} from 'angular2/core';
 import {StoryBoardComponent} from "./story-board.component";
 import {NewsService} from "../services/news.service";
 import {DEBUG_LEVEL, LoggerService} from "../services/logger.service";
+import {SplashScreenComponent} from "./splash-screen.component";
 
 
 @Component({
     selector: 'app-content',
     template: `
-        <story-board></story-board>
+        <story-board
+            (loaded)="ready=true"
+            [hidden]="!ready"
+        ></story-board>
+        <splash-screen [hidden]="ready"></splash-screen>
     `,
     providers: [NewsService],
-    directives: [StoryBoardComponent]
+    directives: [StoryBoardComponent, SplashScreenComponent]
 })
 
 export class AppContentComponent implements OnInit {
+    ready=false;
+
     constructor(
         private newsService:NewsService,
         private logger:LoggerService

@@ -10,6 +10,24 @@ $steel: #666666;
 $tundora: #444444;
 $black: #000000;
 
+/* Shadow */
+
+$black-shadow-lightest: rgba(0, 0, 0, 0.11);
+$black-shadow-lighter: rgba(0, 0, 0, 0.13);
+$black-shadow-light: rgba(0, 0, 0, 0.15);
+$black-shadow: rgba(0, 0, 0, 0.2);
+$black-shadow-dark: rgba(0, 0, 0, 0.4);
+$black-shadow-darker: rgba(0, 0, 0, 0.5);
+$black-shadow-darkest: rgba(0, 0, 0, 0.8);
+
+$white-shadow-darkest: rgba(255, 255, 255, 0.11);
+$white-shadow-darker: rgba(255, 255, 255, 0.13);
+$white-shadow-dark: rgba(255, 255, 255, 0.15);
+$white-shadow: rgba(255, 255, 255, 0.2);
+$white-shadow-light: rgba(255, 255, 255, 0.4);
+$white-shadow-lighter: rgba(255, 255, 255, 0.5);
+$white-shadow-lightest: rgba(255, 255, 255, 0.8);
+
 /* Main colours */
 $mountain-meadow: #1ABC9C;
 $bluewood: #2C3E50;

@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Output} from 'angular2/core';
+import {Component, OnInit, EventEmitter, Output, OnChanges, SimpleChange} from 'angular2/core';
 import {NgClass} from 'angular2/common';
 import {StoryBlockService} from "../services/storyblocks.service";
 import {StoryBlock} from "../models/storyblock";
@@ -10,12 +10,13 @@ import {StoryBlockType} from "../models/storyblock-type";
 import {AuthService} from "../services/auth.service";
 import {WebStorageService} from "../services/webstorage.service";
 import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
+import {Story} from "../models/story";
 
 
 @Component({
     selector: 'story',
     template: `
-            <main>
+            <main [hidden]="!hasLoaded">
                 <timeline class="timeline-block"></timeline>
                 <div class="story-blocks">
                     <storyblock *ngFor="#storyBlock of storyBlocks; #i = index" 
@@ -23,6 +24,9 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
                         [storyBlockInfo]="storyBlock" 
                         [zoomLevel]="zoomLevel"
                         [userId]="userId"
+                        [story]="story"
+                        (modified)="modified=true"
+                        (loaded)="storyBlockLoaded($event)"
                         [exposedIndex]="exposedIndex"
                         [ngClass]="{exposed: exposedIndex == i}"
                         (removeStoryBlockEvent)="removeStoryBlock($event)" 
@@ -49,10 +53,10 @@ import {LoggerService, DEBUG_LEVEL} from "../services/logger.service";
     `,
     providers: [],
     directives: [StoryBlockComponent, TimelineComponent, AddButtonComponent, NgClass],
-    inputs: ['userId']
+    inputs: ['userId', 'story']
 })
 
-export class StoryComponent implements OnInit {
+export class StoryComponent implements OnInit, OnChanges {
     public storyBlocks:StoryBlock[];
     public storyBlockTypes:StoryBlockType[];
     public storyBlockDefaultTypes:StoryBlockType[];
@@ -63,13 +67,18 @@ export class StoryComponent implements OnInit {
     public token:string = '';
     public menuVisible;
     public userId;
+    public story:Story;
     public accessFormVisible;
     private maxIndex = 0;
     private notification;
+    private storyBlocksLoaded;
+    private modified = false;
+    private hasLoaded=false;
 
     @Output() notify:EventEmitter<any> = new EventEmitter();
     @Output() exposeStoryBlock:EventEmitter<any> = new EventEmitter();
     @Output() storyBlockList:EventEmitter<any> = new EventEmitter();
+    @Output() loaded:EventEmitter<any> = new EventEmitter();
 
     constructor(private logger:LoggerService,
                 private storyBlockService:StoryBlockService,
@@ -83,21 +92,39 @@ export class StoryComponent implements OnInit {
 
     ngOnInit():any {
         this.storyBlocks = [];
-        this.getStoryBlockTypes();
-        this.getStoryBlocks(this.userId);
+        this.storyBlocksLoaded = 0;
         this.zoomLevel = 4;
         this.exposedIndex = -1;
         this.exposedStoryBlock = null;
+        this.modified=false;
         this.addButton = {
             visible: false,
             top: 0
         };
+
         this.menuVisible = false;
         this.accessFormVisible = false;
         this.notification = {
             type: null,
             message: '',
         };
+        if(!!this.story && !!this.story._id) {
+            this.getStoryBlockTypes();
+            this.getStoryBlocks(this.userId);
+        }
+        else{
+            this.modified=true;
+        }
+        this.checkIfLoadingIsComplete()
+    }
+
+    ngOnChanges(changes:{[propertyName: string]: SimpleChange}):any {
+        for(let propName in changes){
+            if(propName === 'story'){
+                console.log('Changed story', changes[propName]);
+                this.ngOnInit();
+            }
+        }
     }
 
     authUser() {
@@ -122,13 +149,26 @@ export class StoryComponent implements OnInit {
         this.getStoryBlocks(this.userId);
     }
 
+    storyBlockLoaded($event){
+        this.storyBlocksLoaded = this.storyBlocksLoaded+1;
+        this.checkIfLoadingIsComplete()
+    }
+
+    checkIfLoadingIsComplete(){
+        this.hasLoaded = this.storyBlocks.length === this.storyBlocksLoaded && this.modified;
+        this.logger.log(DEBUG_LEVEL.INFO, 'checkIfLoadingIsComplete', 'Checking if all the blocks are loaded', this.storyBlocks.length, this.storyBlocksLoaded);
+        if(this.hasLoaded){
+            this.loaded.emit(this.storyBlockList);
+        }
+    }
+
     getStoryBlockTypes() {
         this.storyBlockTypes = this.storyBlockService.getStoryBlockTypes();
         this.storyBlockDefaultTypes = this.storyBlockService.getStoryBlockDefaultTypes();
     }
 
-    getStoryBlocks(id) {
-        this.storyBlockService.getStoryBlocks(id).subscribe(
+    getStoryBlocks(userId) {
+        this.storyBlockService.getStoryBlocks(userId, this.story._id).subscribe(
             data => {
                 this.storyBlocks = data;
                 this.maxIndex = 0;
@@ -138,16 +178,19 @@ export class StoryComponent implements OnInit {
                         this.maxIndex = Math.max(this.maxIndex, this.storyBlocks[i].blockId || 0);
                     }
                 }
-                if (!this.storyBlocks || this.storyBlocks.length == 0) {
+                if (!this.modified && (!this.storyBlocks || this.storyBlocks.length == 0)) {
                     this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'No blocks received!');
-                    this.storyBlockService.generateTestData(this.userId).subscribe(
+                    this.storyBlockService.generateTestData(this.userId, this.story._id).subscribe(
                         saveDefaultBlocks => {
                             this.storyBlocks = saveDefaultBlocks;
                             this.recalculateStoryBlockNumbers();
                             this.storyBlockList.emit(this.storyBlocks);
                         },
-                        err => this.logger.log(DEBUG_LEVEL.ERROR, 'getStoryBlocks', 'Error',err),
-                        () => this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' default blocks', this.storyBlocks)
+                        err => this.logger.log(DEBUG_LEVEL.ERROR, 'getStoryBlocks', 'Error', err),
+                        () => {
+                            this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' default blocks', this.storyBlocks);
+                            this.modified = true;
+                        }
                     );
                 }
                 else {
@@ -156,14 +199,20 @@ export class StoryComponent implements OnInit {
                 }
 
             },
-            err => console.error(err),
+            err => {
+                this.logger.log(DEBUG_LEVEL.ERROR, 'getStoryBlocks', 'Error', err)
+            },
             () => {
                 this.logger.log(DEBUG_LEVEL.INFO, 'getStoryBlocks', 'Loaded ' + this.storyBlocks.length + ' blocks', this.storyBlocks)
+                this.modified = true;
             }
         );
     }
 
     removeStoryBlock(index) {
+        if(this.storyBlocks[index].loaded){
+            this.storyBlocksLoaded--;
+        }
         this.storyBlocks.splice(index, 1);
         this.storyBlockList.emit(this.storyBlocks);
         this.recalculateStoryBlockNumbers();
@@ -290,7 +339,7 @@ export class StoryComponent implements OnInit {
 
     save() {
         for (var i = 0; i < this.storyBlocks.length; i++) {
-            this.storyBlockService.saveStoryBlock(this.userId, this.storyBlocks[i]).subscribe();
+            this.storyBlockService.saveStoryBlock(this.userId, this.story._id, this.storyBlocks[i]).subscribe();
         }
     }
 

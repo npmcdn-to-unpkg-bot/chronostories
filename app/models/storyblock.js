@@ -1,6 +1,10 @@
 var mongoose = require('mongoose');
 
 var StoryBlockSchema = new mongoose.Schema({
+    storyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Story'
+    },
     blockId: Number,
     title: String,
     description: String,

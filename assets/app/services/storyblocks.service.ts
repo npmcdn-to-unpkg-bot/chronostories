@@ -35,13 +35,13 @@ export class StoryBlockService {
         return this._exposedIndex;
     }
 
-    getStoryBlocks(userId):Observable<StoryBlock[]> {
-        return this.http.get(this.configuration.apiBasePath + '/story/' + userId)
+    getStoryBlocks(userId, storyId):Observable<StoryBlock[]> {
+        return this.http.get(this.configuration.apiBasePath + '/story/' + userId + '/'+ storyId)
             .map(res => res.json())
             .catch(this.logger.errorCatcher());
     }
 
-    saveStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock> {
+    saveStoryBlock(userId, storyId, storyBlock:StoryBlock):Observable<StoryBlock> {
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
         });
@@ -50,25 +50,27 @@ export class StoryBlockService {
             headers: headers
         });
 
+        storyBlock.userId = userId;
+        storyBlock.storyId = storyId;
         if (!!storyBlock._id) {
             storyBlock.createdAt = storyBlock.createdAt || (new Date());
             storyBlock.lastModifiedAt = (new Date());
-            return this.http.put(this.configuration.apiBasePath + '/story/' + userId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
+            return this.http.put(this.configuration.apiBasePath + '/story/' + userId + '/'+ storyId + '/' + storyBlock._id, "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
         else {
             storyBlock.createdAt = (new Date());
             storyBlock.lastModifiedAt = (new Date());
-            return this.http.post(this.configuration.apiBasePath + '/story/' + userId + '/', "data=" + JSON.stringify(storyBlock), options)
+            return this.http.post(this.configuration.apiBasePath + '/story/' + userId + '/'+ storyId + '/', "data=" + JSON.stringify(storyBlock), options)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
     }
 
-    deleteStoryBlock(userId, storyBlock:StoryBlock):Observable<StoryBlock[]> {
+    deleteStoryBlock(userId, storyId, storyBlock:StoryBlock):Observable<StoryBlock[]> {
         if (!!storyBlock._id) {
-            return this.http.delete(this.configuration.apiBasePath + '/story/' + userId + '/' + storyBlock._id)
+            return this.http.delete(this.configuration.apiBasePath + '/story/' + userId + '/'+ storyId + '/' + storyBlock._id)
                 .map(res => res.json())
                 .catch(this.logger.errorCatcher());
         }
@@ -83,7 +85,7 @@ export class StoryBlockService {
         return STORYBLOCK_TYPES;
     }
 
-    generateTestData(userId):Observable<StoryBlock[]> {
+    generateTestData(userId, storyId):Observable<StoryBlock[]> {
         this.logger.log(DEBUG_LEVEL.INFO, 'generateTestData', 'Creating temporary data for ' + userId);
         let headers = new Headers({
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -97,11 +99,12 @@ export class StoryBlockService {
 
         for (var i = 0; i < blocks.length; i++) {
             blocks[i].userId = userId;
+            blocks[i].storyId = storyId;
             blocks[i].createdAt = (new Date());
             blocks[i].lastModifiedAt = (new Date());
         }
 
-        return this.http.post(this.configuration.apiBasePath + '/story/' + userId + '/', "data=" + JSON.stringify(blocks), options)
+        return this.http.post(this.configuration.apiBasePath + '/story/' + userId + '/'+ storyId + '/', "data=" + JSON.stringify(blocks), options)
             .map(res => res.json())
             .catch(this.logger.errorCatcher());
     }

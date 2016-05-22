@@ -1,0 +1,192 @@
+/* Animation Keyframes */
+@keyframes scale_header {
+  0%   {max-height: 0px; margin-bottom: 0px; opacity: 0;}
+  100% {max-height: 117px; margin-bottom: 25px; opacity: 1;}
+}
+
+@keyframes input_opacity {
+  0%   {transform: translateY(-10px); opacity: 0}
+  100% {transform: translateY(0px); opacity: 1}
+}
+
+@keyframes text_opacity {
+  0% {color: transparent;}
+}
+
+@keyframes error_before {
+  0%   {height: 5px; background: $black-shadow-light; color: transparent;}
+  10%  {height: 117px; background: $white; color: $punch}
+  90%  {height: 117px; background: $white; color: $punch}
+  100% {height: 5px; background: $black-shadow-light; color: transparent;}
+}
+
+story-list main{
+  padding: 50px 3%;
+}
+
+story-card {
+  display: inline-block;
+  margin: 20px;
+}
+
+story-list main .add-story-card {
+  margin: 20px;
+  display: inline-block;
+
+  .story-add {
+    position: relative;
+    width: 100%;
+    padding: 10px 5px;
+    margin: 0 auto 25px auto;
+    box-sizing: border-box;
+    background: transparent;
+    font-size: 17rem;
+    line-height: 150px;
+    text-align: center;
+    font-weight: 500;
+    min-height: 220px;
+    max-height: 220px;
+    min-width: 220px;
+    max-width: 220px;
+    color: rgba($ship-cove, 0.5);
+    opacity: 1;
+    animation: input_opacity 0.8s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: border-bottom 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+    border: 10px rgba($ship-cove,0.3) solid;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:hover {
+      color: $ship-cove;
+    }
+  }
+
+  footer {
+    min-height: 24px;
+    max-height: 24px;
+  }
+}
+
+/* Story Form */
+.story-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 340px;
+  height: auto;
+  box-sizing: border-box;
+
+  img {
+    width: 200px;
+    margin: 0 0 20px 0;
+  }
+
+  p {
+    align-self: flex-start;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8rem;
+    color: $black-shadow-darker;
+    a {
+      color: $black-shadow-dark;
+    }
+  }
+}
+
+
+.story {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  background: $white-smoke;
+  overflow: hidden;
+  animation: input_opacity 0.2s cubic-bezier(.55, 0, .1, 1);
+  box-shadow: 0 2px 2px 0 $black-shadow-lighter,
+  0 1px 5px 0 $black-shadow-lightest,
+  0 3px 1px -2px $black-shadow;
+
+  header {
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    margin: -10px -10px 25px -10px;
+    border-bottom: 1px solid $black-shadow-lightest;
+    background: $ship-cove;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    color: $white-smoke;
+    animation: scale_header 0.6s cubic-bezier(.55, 0, .1, 1), text_opacity 1s cubic-bezier(.55, 0, .1, 1);
+    box-shadow: 0px 2px 2px 0px $black-shadow-lighter,
+    0px 1px 5px 0px $black-shadow-lightest,
+    0px 3px 1px -2px $black-shadow;
+    box-sizing: initial;
+    text-align: left;
+    min-height: 130px;
+    max-height: 130px;
+    overflow: hidden;
+
+     &:before {
+       content: '';
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       position: absolute;
+       width: 100%;
+       height: 5px;
+       padding: 10px;
+       margin: -10px 0 0px -10px;
+       box-sizing: border-box;
+       background: $black-shadow-light;
+       font-family: 'Roboto', sans-serif;
+       font-size: 0.9rem;
+       color: transparent;
+       z-index: 5;
+     }
+
+    h2 {
+      margin: 30px 0 10px 0;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    h4 {
+      font-size: 0.7em;
+      animation: text_opacity 1.5s cubic-bezier(.55, 0, .1, 1);
+      color: $white-shadow-light;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+
+  footer.default-actions {
+    text-align: right;
+    min-height: 24px;
+    max-height: 24px;
+  }
+}
+
+
+
+
+/* Inputs */
+.story-description {
+  position: relative;
+  width: 100%;
+  padding: 10px 5px;
+  margin: 0 0 25px 0;
+  border: none;
+  border-bottom: 2px solid $black-shadow-lightest;
+  box-sizing: border-box;
+  background: transparent;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  min-height: 220px;
+  max-height: 220px;
+  overflow: auto;
+  opacity: 1;
+  animation: input_opacity 0.8s cubic-bezier(.55, 0, .1, 1);
+  transition: border-bottom 0.2s cubic-bezier(.55, 0, .1, 1);
+}
